@@ -220,6 +220,37 @@ input[type=number]{-moz-appearance:textfield}
 .bedtime-in:focus{outline:1px solid var(--evng-b)}
 .hi.done .bedtime-in{color:var(--text-m)}
 
+/* ══ DAY NAV ══ */
+.date-nav{display:flex;align-items:center;gap:8px}
+.day-arrow{width:30px;height:30px;border:1.5px solid var(--border);border-radius:50%;background:var(--surface);cursor:pointer;font-size:17px;color:var(--text-m);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:1}
+.day-arrow:hover:not(:disabled){background:var(--surface-2);color:var(--primary-d);border-color:var(--primary-l)}
+.day-arrow:disabled{opacity:.3;cursor:default}
+
+/* ══ ADD HABIT ══ */
+.add-habit-row{padding:6px 0 2px;border-top:1px solid rgba(53,35,24,.06)}
+.add-habit-btn{background:none;border:1.5px dashed rgba(53,35,24,.18);border-radius:var(--rx);padding:5px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--text-m);cursor:pointer;text-align:left;width:100%;transition:all .15s}
+.add-habit-btn:hover{border-color:var(--primary);color:var(--primary-d)}
+.add-habit-form{display:none;gap:5px;align-items:center;margin-top:5px}
+.add-habit-inp{flex:1;padding:5px 10px;border:1.5px solid var(--primary-l);border-radius:var(--rx);font-family:'Nunito',sans-serif;font-size:13px;color:var(--text);background:white;min-width:0}
+.add-habit-inp:focus{outline:none;border-color:var(--primary)}
+.add-habit-ok,.add-habit-cancel{padding:5px 10px;border-radius:var(--rx);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;flex-shrink:0}
+.add-habit-ok{background:var(--primary);color:white}
+.add-habit-cancel{background:var(--surface-3);color:var(--text-m)}
+.rm-habit{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-l);font-size:15px;line-height:1;padding:0 2px 0 6px;flex-shrink:0;opacity:0;transition:opacity .15s}
+.hi:hover .rm-habit,.hi:focus-within .rm-habit{opacity:1}
+
+/* ══ CUSTOM TRIGGERS ══ */
+.add-trigger-chip{padding:5px 12px;border:1.5px dashed rgba(53,35,24,.18);border-radius:20px;background:transparent;cursor:pointer;font-size:12.5px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--text-m);transition:all .15s}
+.add-trigger-chip:hover{border-color:var(--primary);color:var(--primary-d)}
+.add-trigger-form{display:none;align-items:center;gap:5px}
+.add-trigger-inp{padding:5px 10px;border:1.5px solid var(--primary-l);border-radius:20px;font-family:'Nunito',sans-serif;font-size:12.5px;color:var(--text);background:white;width:130px}
+.add-trigger-inp:focus{outline:none;border-color:var(--primary)}
+.add-trigger-ok,.add-trigger-cancel{padding:4px 9px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none}
+.add-trigger-ok{background:var(--primary);color:white}
+.add-trigger-cancel{background:var(--surface-3);color:var(--text-m)}
+.chip-rm{font-size:12px;margin-left:3px;opacity:.45;cursor:pointer}
+.chip-rm:hover{opacity:1}
+
 /* ══ TOAST ══ */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--primary-d);color:white;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;opacity:0;transition:opacity .25s;z-index:500;pointer-events:none}
 .toast.show{opacity:1}
@@ -284,7 +315,11 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 
   <div class="hdr-mid">
-    <div class="date-badge" id="dateBadge"></div>
+    <div class="date-nav">
+      <button class="day-arrow" id="dayPrev" title="Předchozí den">&#8249;</button>
+      <div class="date-badge" id="dateBadge"></div>
+      <button class="day-arrow" id="dayNext" title="Další den" disabled>&#8250;</button>
+    </div>
   </div>
 
   <!-- decorative botanical - right side -->
@@ -377,6 +412,10 @@ input[type=number]{-moz-appearance:textfield}
         <div class="hi" data-b="morn" data-i="1"><div class="hb-num">2</div><span class="hl">Protein do 60 minut od vstávání (20–30 g)</span></div>
         <div class="hi" data-b="morn" data-i="2"><div class="hb-num">3</div><span class="hl">Pohyb 10–15 minut – chůze, strečink, lehký pilates</span></div>
         <div class="hi" data-b="morn" data-i="3"><div class="hb-num">4</div><span class="hl">5–10 minut venku – ranní světlo pro kortizol & cykl.</span></div>
+        <div class="add-habit-row" data-b="morn">
+          <button class="add-habit-btn">＋ Přidat vlastní položku</button>
+          <div class="add-habit-form"><input class="add-habit-inp" type="text" placeholder="Nová položka ranní rutiny..." maxlength="80"><button class="add-habit-ok">✓</button><button class="add-habit-cancel">✕</button></div>
+        </div>
       </div>
     </div>
 
@@ -387,6 +426,10 @@ input[type=number]{-moz-appearance:textfield}
         <div class="hi" data-b="aftn" data-i="0"><div class="hb-num">1</div><span class="hl">Vybalancovaný oběd – bílkoviny + vláknina + zdravé tuky</span></div>
         <div class="hi" data-b="aftn" data-i="1"><div class="hb-num">2</div><span class="hl">Procházka po jídle 10–15 min (postprandiální glykémie)</span></div>
         <div class="hi" data-b="aftn" data-i="2"><div class="hb-num">3</div><span class="hl">1,5 l vody splněno do odpoledne</span></div>
+        <div class="add-habit-row" data-b="aftn">
+          <button class="add-habit-btn">＋ Přidat vlastní položku</button>
+          <div class="add-habit-form"><input class="add-habit-inp" type="text" placeholder="Nová položka odpolední rutiny..." maxlength="80"><button class="add-habit-ok">✓</button><button class="add-habit-cancel">✕</button></div>
+        </div>
       </div>
     </div>
 
@@ -397,6 +440,10 @@ input[type=number]{-moz-appearance:textfield}
         <div class="hi" data-b="evng" data-i="0"><div class="hb-num">1</div><span class="hl">Zdravá svačina – bez cukru a ultra-zpracovaných jídel</span></div>
         <div class="hi" data-b="evng" data-i="1"><div class="hb-num">2</div><span class="hl">Relaxace – dech, meditace, čtení, klidná aktivita</span></div>
         <div class="hi" data-b="evng" data-i="2"><div class="hb-num">3</div><span class="hl">Bedtime goal: ulehnout do <input type="time" id="bedtimeInput" class="bedtime-in" value="22:30"> pro kvalitní spánek</span></div>
+        <div class="add-habit-row" data-b="evng">
+          <button class="add-habit-btn">＋ Přidat vlastní položku</button>
+          <div class="add-habit-form"><input class="add-habit-inp" type="text" placeholder="Nová položka večerní rutiny..." maxlength="80"><button class="add-habit-ok">✓</button><button class="add-habit-cancel">✕</button></div>
+        </div>
       </div>
     </div>
 
@@ -405,6 +452,13 @@ input[type=number]{-moz-appearance:textfield}
       <div class="ct" style="font-size:16px">⭐ Malé vítězství dne</div>
       <div style="font-size:12.5px;color:var(--text-m);margin-top:-8px;margin-bottom:2px">Co ti dnes šlo dobře? Zapiš si to.</div>
       <input type="text" class="win-in" id="winInput" aria-label="Malé vítězství dne" placeholder="Dnes jsem se cítila dobře po...">
+    </div>
+
+    <!-- Vděčnost -->
+    <div class="card">
+      <div class="ct" style="font-size:16px">🌸 Vděčnost</div>
+      <div style="font-size:12.5px;color:var(--text-m);margin-top:-8px;margin-bottom:2px">Za co jsi dnes vděčná?</div>
+      <input type="text" class="win-in" id="gratInput" aria-label="Vděčnost" placeholder="Dnes jsem vděčná za...">
     </div>
 
   </div><!-- /left -->
@@ -434,7 +488,7 @@ input[type=number]{-moz-appearance:textfield}
 
       <div class="div"></div>
 
-      <div class="cl">🫃 Nafouklnutí</div>
+      <div class="cl">💨 Nafouklnutí</div>
       <div class="srow">
         <button class="sbtn" data-s="bloat" data-v="1">Vůbec</button>
         <button class="sbtn" data-s="bloat" data-v="2">Trochu</button>
@@ -495,7 +549,13 @@ input[type=number]{-moz-appearance:textfield}
         <div class="chip" data-t="alcohol">🍷 Alkohol</div>
         <div class="chip" data-t="processed">🍕 Ultra-zprac. jídla</div>
         <div class="chip" data-t="coffee">☕ Hodně kofeinu</div>
-        <div class="chip" data-t="nooutside">🌲 Nebyly venku</div>
+        <div class="chip" data-t="nooutside">🌲 Nebyla jsem venku</div>
+        <button class="add-trigger-chip" id="addTriggerChip">＋ Přidat</button>
+        <div class="add-trigger-form" id="addTriggerForm">
+          <input class="add-trigger-inp" id="addTriggerInp" type="text" placeholder="Název spouštěče..." maxlength="30">
+          <button class="add-trigger-ok" id="addTriggerOk">✓</button>
+          <button class="add-trigger-cancel" id="addTriggerCancel">✕</button>
+        </div>
       </div>
     </div>
 
@@ -742,21 +802,22 @@ input[type=number]{-moz-appearance:textfield}
 
 <script>
 // ═══════════════════════════════════════════════
-// CONSTANTS
+// UTILS & CONSTANTS
 // ═══════════════════════════════════════════════
-const TOTAL = document.querySelectorAll('.hi').length;
-const CIRC  = 2 * Math.PI * 24;
+const CIRC = 2 * Math.PI * 24;
+const REAL_TODAY = new Date().toISOString().split('T')[0];
+let viewDay = REAL_TODAY;
 
-function todayKey(){ return new Date().toISOString().split('T')[0]; }
+function dayKey(d){ return d.toISOString().split('T')[0]; }
 function weekKey(){
   const d=new Date(), dw=d.getDay()||7, m=new Date(d);
   m.setDate(d.getDate()-dw+1);
   return m.toISOString().split('T')[0];
 }
-
-const TODAY=todayKey(), WEEK=weekKey();
+const WEEK=weekKey();
 
 function gs(k){ try{ return JSON.parse(localStorage.getItem(k))||{}; }catch{ return {}; } }
+function gsa(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch{ return []; } }
 function ss(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
 
 let _toastT;
@@ -770,21 +831,20 @@ function toast(){
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-let dd=gs('pcos_day_'+TODAY);
+let dd=gs('pcos_day_'+viewDay);
 let ml=gs('pcos_meals_'+WEEK);
 let wd=gs('pcos_week_'+WEEK);
 let jd=gs('pcos_journey');
 
-function saveDd(){ ss('pcos_day_'+TODAY,dd); toast(); }
+function saveDd(){ ss('pcos_day_'+viewDay,dd); toast(); }
 function saveMl(){ ss('pcos_meals_'+WEEK,ml); toast(); }
 function saveWd(){ ss('pcos_week_'+WEEK,wd); toast(); }
 function saveJd(){ ss('pcos_journey',jd); toast(); }
 
-// ═══════════════════════════════════════════════
-// HEADER DATE
-// ═══════════════════════════════════════════════
-document.getElementById('dateBadge').textContent =
-  new Date().toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+function getCustomHabits(){ return gs('pcos_custom_habits'); }
+function saveCustomHabits(ch){ ss('pcos_custom_habits',ch); }
+function getCustomTriggers(){ return gsa('pcos_custom_triggers'); }
+function saveCustomTriggers(ct){ ss('pcos_custom_triggers',ct); }
 
 // ═══════════════════════════════════════════════
 // PROGRESS RING
@@ -797,129 +857,251 @@ function setRing(n,t){
   document.getElementById('ringTxt').textContent=p+'%';
 }
 
-// ═══════════════════════════════════════════════
-// HABITS
-// ═══════════════════════════════════════════════
-const cnts={morn:4,aftn:3,evng:3};
 const cntId={morn:'cnt-m',aftn:'cnt-a',evng:'cnt-e'};
 function recount(){
   ['morn','aftn','evng'].forEach(b=>{
-    const total=cnts[b];
+    const total=document.querySelectorAll(`.hi[data-b="${b}"]`).length;
     const done=document.querySelectorAll(`.hi.done[data-b="${b}"]`).length;
     document.getElementById(cntId[b]).textContent=done+'/'+total;
   });
-  const allDone=document.querySelectorAll('.hi.done').length;
-  setRing(allDone,TOTAL);
+  const all=document.querySelectorAll('.hi').length;
+  const done=document.querySelectorAll('.hi.done').length;
+  setRing(done,all);
 }
 
-(function initHabits(){
-  if(!dd.habits) dd.habits={};
-  document.querySelectorAll('.hi').forEach(el=>{
-    const k=el.dataset.b+'_'+el.dataset.i;
-    if(dd.habits[k]) el.classList.add('done');
-    el.addEventListener('click',()=>{
-      el.classList.toggle('done');
-      dd.habits[k]=el.classList.contains('done');
-      saveDd(); recount();
+// ═══════════════════════════════════════════════
+// CUSTOM HABITS
+// ═══════════════════════════════════════════════
+function renderCustomHabits(){
+  const ch=getCustomHabits();
+  ['morn','aftn','evng'].forEach(b=>{
+    const bd=document.querySelector(`.hb.${b} .hb-bd`);
+    bd.querySelectorAll('.hi[data-custom]').forEach(el=>el.remove());
+    const items=ch[b]||[];
+    const addRow=bd.querySelector('.add-habit-row');
+    items.forEach((text,i)=>{
+      const hi=document.createElement('div');
+      hi.className='hi'; hi.dataset.b=b; hi.dataset.i='c'+i; hi.dataset.custom='1';
+      hi.setAttribute('role','button'); hi.setAttribute('tabindex','0');
+      const k=b+'_c'+i;
+      if(dd.habits&&dd.habits[k]) hi.classList.add('done');
+      hi.innerHTML=`<div class="hb-num"></div><span class="hl">${text}</span><button class="rm-habit" aria-label="Odstranit">×</button>`;
+      hi.querySelector('.rm-habit').addEventListener('click',e=>{
+        e.stopPropagation();
+        const ch2=getCustomHabits(); ch2[b].splice(i,1); saveCustomHabits(ch2);
+        renderCustomHabits(); recount();
+      });
+      hi.addEventListener('click',e=>{
+        if(e.target.classList.contains('rm-habit')) return;
+        hi.classList.toggle('done');
+        if(!dd.habits) dd.habits={};
+        dd.habits[k]=hi.classList.contains('done');
+        saveDd(); recount();
+      });
+      hi.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); hi.click(); }});
+      bd.insertBefore(hi, addRow);
+    });
+    bd.querySelectorAll('.hi').forEach((el,idx)=>{
+      const n=el.querySelector('.hb-num'); if(n) n.textContent=idx+1;
     });
   });
   recount();
-})();
+}
+
+function initAddHabitButtons(){
+  document.querySelectorAll('.add-habit-row').forEach(row=>{
+    const b=row.dataset.b;
+    const btn=row.querySelector('.add-habit-btn');
+    const form=row.querySelector('.add-habit-form');
+    const inp=row.querySelector('.add-habit-inp');
+    const ok=row.querySelector('.add-habit-ok');
+    const cancel=row.querySelector('.add-habit-cancel');
+    btn.addEventListener('click',()=>{ btn.style.display='none'; form.style.display='flex'; inp.focus(); });
+    const close=()=>{ inp.value=''; form.style.display='none'; btn.style.display=''; };
+    cancel.addEventListener('click',close);
+    const confirm=()=>{
+      const t=inp.value.trim(); if(!t) return;
+      const ch=getCustomHabits(); if(!ch[b]) ch[b]=[];
+      ch[b].push(t); saveCustomHabits(ch); close(); renderCustomHabits();
+    };
+    ok.addEventListener('click',confirm);
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter') confirm(); if(e.key==='Escape') close(); });
+  });
+}
 
 // ═══════════════════════════════════════════════
-// MOOD
+// CUSTOM TRIGGERS
 // ═══════════════════════════════════════════════
-(function initMood(){
-  if(!dd.mood) dd.mood=null;
+function renderCustomTriggers(){
+  const ct=getCustomTriggers();
+  const grid=document.getElementById('triggerGrid');
+  grid.querySelectorAll('.chip[data-custom-t]').forEach(el=>el.remove());
+  const addBtn=document.getElementById('addTriggerChip');
+  ct.forEach((text,i)=>{
+    const c=document.createElement('div');
+    c.className='chip'; c.dataset.customT=String(i);
+    c.setAttribute('role','button'); c.setAttribute('tabindex','0');
+    const key='custom_'+i;
+    if(dd.trig&&dd.trig[key]) c.classList.add('on');
+    c.innerHTML=text+'<span class="chip-rm" title="Odstranit">×</span>';
+    c.querySelector('.chip-rm').addEventListener('click',e=>{
+      e.stopPropagation();
+      const ct2=getCustomTriggers(); ct2.splice(i,1); saveCustomTriggers(ct2);
+      renderCustomTriggers();
+    });
+    c.addEventListener('click',e=>{
+      if(e.target.classList.contains('chip-rm')) return;
+      c.classList.toggle('on');
+      if(!dd.trig) dd.trig={};
+      dd.trig[key]=c.classList.contains('on'); saveDd();
+    });
+    c.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); c.click(); }});
+    grid.insertBefore(c, addBtn);
+  });
+}
+
+function initAddTriggerButton(){
+  const addBtn=document.getElementById('addTriggerChip');
+  const form=document.getElementById('addTriggerForm');
+  const inp=document.getElementById('addTriggerInp');
+  const ok=document.getElementById('addTriggerOk');
+  const cancel=document.getElementById('addTriggerCancel');
+  addBtn.addEventListener('click',()=>{ addBtn.style.display='none'; form.style.display='flex'; inp.focus(); });
+  const close=()=>{ inp.value=''; form.style.display='none'; addBtn.style.display=''; };
+  cancel.addEventListener('click',close);
+  const confirm=()=>{
+    const t=inp.value.trim(); if(!t) return;
+    const ct=getCustomTriggers(); ct.push(t); saveCustomTriggers(ct);
+    close(); renderCustomTriggers();
+  };
+  ok.addEventListener('click',confirm);
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter') confirm(); if(e.key==='Escape') close(); });
+}
+
+// ═══════════════════════════════════════════════
+// RENDER DAY (updates all UI to match viewDay)
+// ═══════════════════════════════════════════════
+function renderDay(){
+  dd=gs('pcos_day_'+viewDay);
+  if(!dd.habits) dd.habits={};
+  if(!dd.sym)    dd.sym={};
+  if(!dd.trig)   dd.trig={};
+  if(!dd.ex)     dd.ex=[];
+
+  const d=new Date(viewDay+'T12:00:00');
+  document.getElementById('dateBadge').textContent=
+    d.toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('dayNext').disabled=viewDay>=REAL_TODAY;
+
+  document.querySelectorAll('.hi:not([data-custom])').forEach(el=>{
+    el.classList.toggle('done',!!dd.habits[el.dataset.b+'_'+el.dataset.i]);
+  });
+  renderCustomHabits();
+
+  document.querySelectorAll('.mb').forEach(b=>b.classList.toggle('sel',String(dd.mood)===b.dataset.v));
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.toggle('sel',String(dd.sym[b.dataset.s])===b.dataset.v));
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('sel',String(dd.pain)===b.dataset.p));
+  document.querySelectorAll('.exbtn').forEach(b=>b.classList.toggle('sel',dd.ex.includes(b.dataset.x)));
+  document.querySelectorAll('#triggerGrid .chip[data-t]').forEach(c=>c.classList.toggle('on',!!(dd.trig&&dd.trig[c.dataset.t])));
+  renderCustomTriggers();
+
+  document.getElementById('winInput').value=dd.win||'';
+  document.getElementById('notesInput').value=dd.notes||'';
+  document.getElementById('gratInput').value=dd.grat||'';
+  const bi=document.getElementById('bedtimeInput');
+  if(bi) bi.value=dd.bedtime||'22:30';
+}
+
+// ═══════════════════════════════════════════════
+// DAY NAVIGATION
+// ═══════════════════════════════════════════════
+function navigateDay(delta){
+  const d=new Date(viewDay+'T12:00:00');
+  d.setDate(d.getDate()+delta);
+  const next=dayKey(d);
+  if(next>REAL_TODAY) return;
+  viewDay=next;
+  renderDay();
+}
+
+// ═══════════════════════════════════════════════
+// EVENT BINDING (habits, mood, scales, pain, ex, triggers, inputs)
+// ═══════════════════════════════════════════════
+function initHabits(){
+  document.querySelectorAll('.hi:not([data-custom])').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const k=el.dataset.b+'_'+el.dataset.i;
+      el.classList.toggle('done');
+      if(!dd.habits) dd.habits={};
+      dd.habits[k]=el.classList.contains('done');
+      saveDd(); recount();
+    });
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.click(); }});
+  });
+}
+
+function initMood(){
   document.querySelectorAll('.mb').forEach(b=>{
-    if(String(dd.mood)===b.dataset.v) b.classList.add('sel');
     b.addEventListener('click',()=>{
       document.querySelectorAll('.mb').forEach(x=>x.classList.remove('sel'));
-      b.classList.add('sel');
-      dd.mood=b.dataset.v;
-      saveDd();
+      b.classList.add('sel'); dd.mood=b.dataset.v; saveDd();
     });
   });
-})();
+}
 
-// ═══════════════════════════════════════════════
-// SCALES
-// ═══════════════════════════════════════════════
-(function initScales(){
-  if(!dd.sym) dd.sym={};
+function initScales(){
   document.querySelectorAll('.sbtn').forEach(b=>{
-    const s=b.dataset.s, v=b.dataset.v;
-    if(String(dd.sym[s])===v) b.classList.add('sel');
+    const s=b.dataset.s;
     b.addEventListener('click',()=>{
       document.querySelectorAll(`.sbtn[data-s="${s}"]`).forEach(x=>x.classList.remove('sel'));
       b.classList.add('sel');
-      dd.sym[s]=v;
-      saveDd();
+      if(!dd.sym) dd.sym={}; dd.sym[s]=b.dataset.v; saveDd();
     });
   });
-})();
+}
 
-// ═══════════════════════════════════════════════
-// PAIN
-// ═══════════════════════════════════════════════
-(function initPain(){
-  if(!dd.pain) dd.pain=null;
+function initPain(){
   document.querySelectorAll('.pbtn').forEach(b=>{
-    if(String(dd.pain)===b.dataset.p) b.classList.add('sel');
     b.addEventListener('click',()=>{
       document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('sel'));
-      b.classList.add('sel');
-      dd.pain=b.dataset.p;
-      saveDd();
+      b.classList.add('sel'); dd.pain=b.dataset.p; saveDd();
     });
   });
-})();
+}
 
-// ═══════════════════════════════════════════════
-// EXERCISE
-// ═══════════════════════════════════════════════
-(function initEx(){
-  if(!dd.ex) dd.ex=[];
+function initEx(){
   document.querySelectorAll('.exbtn').forEach(b=>{
-    if(dd.ex.includes(b.dataset.x)) b.classList.add('sel');
     b.addEventListener('click',()=>{
       b.classList.toggle('sel');
-      const x=b.dataset.x;
       if(!dd.ex) dd.ex=[];
-      if(b.classList.contains('sel')) dd.ex.push(x);
-      else dd.ex=dd.ex.filter(e=>e!==x);
+      if(b.classList.contains('sel')) dd.ex.push(b.dataset.x);
+      else dd.ex=dd.ex.filter(e=>e!==b.dataset.x);
       saveDd();
     });
   });
-})();
+}
 
-// ═══════════════════════════════════════════════
-// TRIGGERS
-// ═══════════════════════════════════════════════
-(function initTriggers(){
-  if(!dd.trig) dd.trig={};
-  document.querySelectorAll('#triggerGrid .chip').forEach(c=>{
-    if(dd.trig[c.dataset.t]) c.classList.add('on');
+function initTriggers(){
+  document.querySelectorAll('#triggerGrid .chip[data-t]').forEach(c=>{
+    c.setAttribute('role','button'); c.setAttribute('tabindex','0');
     c.addEventListener('click',()=>{
       c.classList.toggle('on');
-      dd.trig[c.dataset.t]=c.classList.contains('on');
-      saveDd();
+      if(!dd.trig) dd.trig={};
+      dd.trig[c.dataset.t]=c.classList.contains('on'); saveDd();
     });
+    c.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); c.click(); }});
   });
-})();
+}
 
-// ═══════════════════════════════════════════════
-// WIN & NOTES
-// ═══════════════════════════════════════════════
-(function initWinNotes(){
+function initWinNotes(){
   const wi=document.getElementById('winInput');
   const ni=document.getElementById('notesInput');
-  if(dd.win) wi.value=dd.win;
-  if(dd.notes) ni.value=dd.notes;
-  let wt,nt;
+  const gi=document.getElementById('gratInput');
+  let wt,nt,gt;
   wi.addEventListener('input',()=>{ clearTimeout(wt); wt=setTimeout(()=>{ dd.win=wi.value; saveDd(); },600); });
   ni.addEventListener('input',()=>{ clearTimeout(nt); nt=setTimeout(()=>{ dd.notes=ni.value; saveDd(); },600); });
-})();
+  gi.addEventListener('input',()=>{ clearTimeout(gt); gt=setTimeout(()=>{ dd.grat=gi.value; saveDd(); },600); });
+}
 
 // ═══════════════════════════════════════════════
 // MEAL PLAN
@@ -974,67 +1156,91 @@ function loadMobDay(day){
 }
 
 // ═══════════════════════════════════════════════
+// MEAL PLAN
+// ═══════════════════════════════════════════════
+function initMeals(){
+  document.querySelectorAll('.meal-ta').forEach(ta=>{
+    const d=ta.dataset.d, m=ta.dataset.m;
+    if(ml[d]&&ml[d][m]) ta.value=ml[d][m];
+    let t;
+    ta.addEventListener('input',()=>{
+      clearTimeout(t);
+      t=setTimeout(()=>{ if(!ml[d]) ml[d]={}; ml[d][m]=ta.value; saveMl(); },500);
+    });
+  });
+  const dayMap={0:'ne',1:'po',2:'ut',3:'st',4:'ct',5:'pa',6:'so'};
+  let mobDay=dayMap[new Date().getDay()];
+  document.querySelectorAll('.dpill').forEach(b=>b.classList.toggle('act',b.dataset.d===mobDay));
+  loadMobDay(mobDay);
+  document.querySelectorAll('.dpill').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.dpill').forEach(x=>x.classList.remove('act'));
+      b.classList.add('act'); mobDay=b.dataset.d; loadMobDay(mobDay);
+    });
+  });
+}
+
+function loadMobDay(day){
+  const d=ml[day]||{};
+  document.querySelectorAll('.mslot-ta').forEach(ta=>{
+    ta.value=d[ta.dataset.m]||'';
+    ta.oninput=()=>{ if(!ml[day]) ml[day]={}; ml[day][ta.dataset.m]=ta.value; saveMl(); };
+  });
+}
+
+// ═══════════════════════════════════════════════
 // OVERVIEW
 // ═══════════════════════════════════════════════
 function buildOverview(){
   const labels=['Po','Út','St','Čt','Pá','So','Ne'];
   const today=new Date(), dw=today.getDay()||7;
   const mon=new Date(today); mon.setDate(today.getDate()-dw+1);
-
-  const bar=document.getElementById('weekBar');
-  bar.innerHTML='';
-
-  let days=0, totPct=0, pctN=0, streak=0, curStreak=0, wins=0;
-  const tCounts={};
-  const moodVals=[],enVals=[],slVals=[];
+  const totalHabits=document.querySelectorAll('.hi').length;
+  const bar=document.getElementById('weekBar'); bar.innerHTML='';
+  let days=0,totPct=0,pctN=0,streak=0,curStreak=0,wins=0;
+  const tCounts={},moodVals=[],enVals=[],slVals=[];
 
   for(let i=0;i<7;i++){
     const d2=new Date(mon); d2.setDate(mon.getDate()+i);
     const k=d2.toISOString().split('T')[0];
     const data=gs('pcos_day_'+k);
-    const isToday=k===TODAY;
+    const isToday=k===REAL_TODAY;
     const hab=data.habits||{};
     const done=Object.values(hab).filter(Boolean).length;
     const hasAny=Object.keys(hab).length>0;
-    if(hasAny){ days++; const p=Math.round(done/TOTAL*100); totPct+=p; pctN++; }
+    if(hasAny){ days++; const p=Math.round(done/Math.max(totalHabits,1)*100); totPct+=p; pctN++; }
     if(data.win) wins++;
     if(hasAny){ curStreak++; streak=Math.max(streak,curStreak); } else curStreak=0;
     if(data.trig) Object.entries(data.trig).forEach(([k2,v])=>{ if(v) tCounts[k2]=(tCounts[k2]||0)+1; });
     if(data.mood) moodVals.push(+data.mood);
     if(data.sym&&data.sym.energy) enVals.push(+data.sym.energy);
     if(data.sym&&data.sym.sleep) slVals.push(+data.sym.sleep);
-
+    const pct=hasAny?Math.round(done/Math.max(totalHabits,1)*100):0;
     const wc=document.createElement('div'); wc.className='wc';
     const lbl=document.createElement('div'); lbl.className='wc-lbl'; lbl.textContent=labels[i];
     const dot=document.createElement('div');
-    const pct=hasAny?Math.round(done/TOTAL*100):0;
     dot.className='wc-dot'+(hasAny?' tr':'')+(isToday?' td':'');
     dot.textContent=d2.getDate();
     const pc=document.createElement('div'); pc.className='wc-pct'; pc.textContent=hasAny?pct+'%':'';
-    wc.appendChild(lbl); wc.appendChild(dot); wc.appendChild(pc);
-    bar.appendChild(wc);
+    wc.appendChild(lbl); wc.appendChild(dot); wc.appendChild(pc); bar.appendChild(wc);
   }
 
   document.getElementById('ovPct').textContent=pctN>0?Math.round(totPct/pctN)+'%':'—';
   document.getElementById('ovDays').textContent=days;
   document.getElementById('ovStreak').textContent=streak;
   document.getElementById('ovWins').textContent=wins;
-
-
   document.getElementById('avgMood').textContent=moodVals.length?(moodVals.reduce((a,b)=>a+b,0)/moodVals.length).toFixed(1):'—';
   document.getElementById('avgEnergy').textContent=enVals.length?(enVals.reduce((a,b)=>a+b,0)/enVals.length).toFixed(1):'—';
   document.getElementById('avgSleep').textContent=slVals.length?(slVals.reduce((a,b)=>a+b,0)/slVals.length).toFixed(1):'—';
 
   const tlab={sugar:'🍬 Cukr',dairy:'🥛 Mléčné',carbs:'🍞 Sacharidy',sleep:'😴 Spánek',stress:'😰 Stres',skipped:'⏰ Vynechal.',alcohol:'🍷 Alkohol',processed:'🍕 Zprac.',coffee:'☕ Kofein',nooutside:'🌲 Ne venku'};
-  const ts=document.getElementById('trigSummary');
-  ts.innerHTML='';
+  const ts=document.getElementById('trigSummary'); ts.innerHTML='';
   const sorted=Object.entries(tCounts).sort((a,b)=>b[1]-a[1]);
   if(!sorted.length){ ts.innerHTML='<div style="font-size:13px;color:var(--text-m);padding:4px">Žádné spouštěče tento týden – super! 🌿</div>'; }
   else sorted.slice(0,8).forEach(([k2,c])=>{
     const ch=document.createElement('div'); ch.className='chip on'; ch.style.cursor='default';
     ch.textContent=(tlab[k2]||k2)+' ×'+c; ts.appendChild(ch);
   });
-
   if(wd.wt) document.getElementById('wtInput').value=wd.wt;
   if(wd.ws) document.getElementById('wsInput').value=wd.ws;
 }
@@ -1044,44 +1250,34 @@ document.getElementById('wsInput').addEventListener('change',function(){ wd.ws=t
 // ═══════════════════════════════════════════════
 // JOURNEY
 // ═══════════════════════════════════════════════
-(function initJourney(){
+function initJourney(){
   if(!jd.done) jd.done=[];
   document.querySelectorAll('.jstep').forEach(el=>{
     const idx=+el.dataset.j;
     if(jd.done.includes(idx)) el.classList.add('done');
+    el.setAttribute('role','button'); el.setAttribute('tabindex','0');
     el.addEventListener('click',()=>{
       el.classList.toggle('done');
       if(el.classList.contains('done')) jd.done.push(idx);
       else jd.done=jd.done.filter(x=>x!==idx);
       saveJd();
     });
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.click(); }});
   });
-})();
+}
 
-// ═══════════════════════════════════════════════
-// NAV
-// ═══════════════════════════════════════════════
 // ═══════════════════════════════════════════════
 // BEDTIME INPUT
 // ═══════════════════════════════════════════════
-(function initBedtime(){
+function initBedtime(){
   const bi=document.getElementById('bedtimeInput');
-  if(dd.bedtime) bi.value=dd.bedtime;
   bi.addEventListener('click',e=>e.stopPropagation());
   bi.addEventListener('change',()=>{ dd.bedtime=bi.value; saveDd(); });
-})();
+}
 
 // ═══════════════════════════════════════════════
-// KEYBOARD ACCESSIBILITY
+// NAV TABS & DAY ARROWS
 // ═══════════════════════════════════════════════
-document.querySelectorAll('#triggerGrid .chip, .jstep, .mb, .exbtn, .pbtn').forEach(el=>{
-  if(!el.getAttribute('tabindex')) el.setAttribute('tabindex','0');
-  el.setAttribute('role','button');
-  el.addEventListener('keydown',e=>{
-    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.click(); }
-  });
-});
-
 document.querySelectorAll('.ntab').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('act'));
@@ -1091,6 +1287,25 @@ document.querySelectorAll('.ntab').forEach(btn=>{
     if(btn.dataset.tab==='prehled') buildOverview();
   });
 });
+document.getElementById('dayPrev').addEventListener('click',()=>navigateDay(-1));
+document.getElementById('dayNext').addEventListener('click',()=>navigateDay(1));
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+initHabits();
+initMood();
+initScales();
+initPain();
+initEx();
+initTriggers();
+initWinNotes();
+initBedtime();
+initMeals();
+initAddHabitButtons();
+initAddTriggerButton();
+initJourney();
+renderDay();
 </script>
 </body>
 </html>
