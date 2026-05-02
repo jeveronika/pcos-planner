@@ -46,7 +46,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .hdr{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(53,35,24,.06)}
 .hdr-in{max-width:1240px;margin:0 auto;padding:12px 32px;display:flex;align-items:center;gap:24px}
 .brand{display:flex;align-items:center;gap:14px;flex-shrink:0}
-.brand-text{}
 .app-name{font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:var(--primary-d);line-height:1;white-space:nowrap}
 .app-sub{font-size:10px;color:var(--text-m);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-top:1px}
 .hdr-mid{flex:1;display:flex;justify-content:center}
@@ -175,7 +174,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .ov-banner::after{content:'';position:absolute;right:-30px;top:-30px;width:180px;height:180px;background:rgba(255,255,255,.07);border-radius:50%}
 .ov-banner::before{content:'';position:absolute;right:40px;bottom:-40px;width:120px;height:120px;background:rgba(255,255,255,.04);border-radius:50%}
 .ov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative;z-index:1}
-.ov-stat{}
 .ov-val{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;line-height:1}
 .ov-lbl{font-size:11px;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
 
@@ -197,7 +195,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 /* ══ FOOD GUIDE ══ */
 .food-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.fg{}
 .fg-hd{font-size:13px;font-weight:700;padding:10px 14px;border-radius:var(--rs) var(--rs) 0 0;color:white}
 .fg.best .fg-hd{background:var(--primary)}
 .fg.worst .fg-hd{background:var(--accent)}
@@ -217,6 +214,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
+
+/* ══ BEDTIME INPUT ══ */
+.bedtime-in{border:none;background:rgba(255,255,255,.7);border-radius:4px;padding:1px 5px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;width:82px}
+.bedtime-in:focus{outline:1px solid var(--evng-b)}
+.hi.done .bedtime-in{color:var(--text-m)}
 
 /* ══ TOAST ══ */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--primary-d);color:white;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;opacity:0;transition:opacity .25s;z-index:500;pointer-events:none}
@@ -321,11 +323,11 @@ input[type=number]{-moz-appearance:textfield}
     Přehled
   </button>
   <button class="ntab" data-tab="cesta">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
     Moje cesta
   </button>
   <button class="ntab" data-tab="potraviny">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/><path d="M8 12h8M12 8v8"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
     Potraviny
   </button>
 </div>
@@ -394,7 +396,7 @@ input[type=number]{-moz-appearance:textfield}
       <div class="hb-bd">
         <div class="hi" data-b="evng" data-i="0"><div class="hb-num">1</div><span class="hl">Zdravá svačina – bez cukru a ultra-zpracovaných jídel</span></div>
         <div class="hi" data-b="evng" data-i="1"><div class="hb-num">2</div><span class="hl">Relaxace – dech, meditace, čtení, klidná aktivita</span></div>
-        <div class="hi" data-b="evng" data-i="2"><div class="hb-num">3</div><span class="hl">Bedtime goal: ulehnout do [čas] pro kvalitní spánek</span></div>
+        <div class="hi" data-b="evng" data-i="2"><div class="hb-num">3</div><span class="hl">Bedtime goal: ulehnout do <input type="time" id="bedtimeInput" class="bedtime-in" value="22:30"> pro kvalitní spánek</span></div>
       </div>
     </div>
 
@@ -402,7 +404,7 @@ input[type=number]{-moz-appearance:textfield}
     <div class="card">
       <div class="ct" style="font-size:16px">⭐ Malé vítězství dne</div>
       <div style="font-size:12.5px;color:var(--text-m);margin-top:-8px;margin-bottom:2px">Co ti dnes šlo dobře? Zapiš si to.</div>
-      <input type="text" class="win-in" id="winInput" placeholder="Dnes jsem se cítila dobře po...">
+      <input type="text" class="win-in" id="winInput" aria-label="Malé vítězství dne" placeholder="Dnes jsem se cítila dobře po...">
     </div>
 
   </div><!-- /left -->
@@ -456,7 +458,7 @@ input[type=number]{-moz-appearance:textfield}
         <button class="sbtn" data-s="skin" data-v="4">Hodně</button>
       </div>
 
-      <div class="cl">🩸 Bolest břicha / menstrukace</div>
+      <div class="cl">🩸 Bolest břicha / menstruace</div>
       <div class="painrow">
         <button class="pbtn no-pain" data-p="0">✓ Žádná</button>
         <button class="pbtn" data-p="1">Mírná 🌿</button>
@@ -501,7 +503,7 @@ input[type=number]{-moz-appearance:textfield}
     <div class="card">
       <div class="ct">📝 Poznámky ke dni</div>
       <div style="font-size:12.5px;color:var(--text-m);margin-top:-8px">Co ses naučila? Co fungovalo? Jak ses cítila?</div>
-      <textarea class="notes-ta" id="notesInput" placeholder="Dnes mě překvapilo, že..."></textarea>
+      <textarea class="notes-ta" id="notesInput" aria-label="Poznámky ke dni" placeholder="Dnes mě překvapilo, že..."></textarea>
     </div>
 
   </div><!-- /right -->
@@ -629,8 +631,8 @@ input[type=number]{-moz-appearance:textfield}
         <div class="ct">Tělesné míry</div>
         <div style="font-size:12.5px;color:var(--text-m);margin-top:-8px">Volitelné – jednou týdně</div>
         <div class="mgrid">
-          <div><div class="mlbl">⚖️ Váha (kg)</div><input class="min" type="number" step=".1" id="wtInput" placeholder="—"></div>
-          <div><div class="mlbl">📏 Pas (cm)</div><input class="min" type="number" step=".5" id="wsInput" placeholder="—"></div>
+          <div><label class="mlbl" for="wtInput">⚖️ Váha (kg)</label><input class="min" type="number" step=".1" id="wtInput" placeholder="—"></div>
+          <div><label class="mlbl" for="wsInput">📏 Pas (cm)</label><input class="min" type="number" step=".5" id="wsInput" placeholder="—"></div>
         </div>
       </div>
 
@@ -672,7 +674,7 @@ input[type=number]{-moz-appearance:textfield}
     <div class="jstep" data-j="7"><div class="js-icon">🛏️</div><div class="js-title">Spánek jako priorita</div><div class="js-desc">7–9 hodin, pravidelný režim, večerní rutina</div></div>
     <div class="jstep" data-j="8"><div class="js-icon">🌿</div><div class="js-title">Gut health</div><div class="js-desc">Kefír, fermentované potraviny, probiotika, vláknina 25–40g/den</div></div>
     <div class="jstep" data-j="9"><div class="js-icon">💛</div><div class="js-title">Komunita & podpora</div><div class="js-desc">Propojila jsem se s jinými ženami s PCOS, nejsem v tom sama</div></div>
-    <div class="jstep" data-j="10"><div class="js-icon">🎯</div><div class="js-title">Konzistentní rutina</div><div class="js-desc">Mám zavedené návyky, které funguji aspoň 30 dní po sobě</div></div>
+    <div class="jstep" data-j="10"><div class="js-icon">🎯</div><div class="js-title">Konzistentní rutina</div><div class="js-desc">Mám zavedené návyky, které fungují aspoň 30 dní po sobě</div></div>
     <div class="jstep" data-j="11"><div class="js-icon">✨</div><div class="js-title">Cítím zlepšení</div><div class="js-desc">Méně příznaků, víc energie, větší pohoda – mám to pod kontrolou</div></div>
   </div>
 </div>
@@ -710,7 +712,7 @@ input[type=number]{-moz-appearance:textfield}
       <div class="fg worst">
         <div class="fg-hd">❌ Čemu se raději vyhnout</div>
         <div class="flist">
-          <div class="frow"><span class="fem">🍬</span><div><div>Cukr a sladkosti</div><div class="fdesc">prudce zvyšuje inzulin → spouští androgens</div></div></div>
+          <div class="frow"><span class="fem">🍬</span><div><div>Cukr a sladkosti</div><div class="fdesc">prudce zvyšuje inzulin → spouští androgeny</div></div></div>
           <div class="frow"><span class="fem">🥤</span><div><div>Slazené nápoje a džusy</div><div class="fdesc">fruktóza zatěžuje játra, GI nekontrolovaný</div></div></div>
           <div class="frow"><span class="fem">🍞</span><div><div>Bílé pečivo a bílá rýže</div><div class="fdesc">vysoké GI, minimum vlákniny</div></div></div>
           <div class="frow"><span class="fem">🍕</span><div><div>Ultra-zpracovaná jídla</div><div class="fdesc">trans-tuky, aditiva, silně zánětlivé</div></div></div>
@@ -742,7 +744,7 @@ input[type=number]{-moz-appearance:textfield}
 // ═══════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════
-const TOTAL = 10; // 4+3+3
+const TOTAL = document.querySelectorAll('.hi').length;
 const CIRC  = 2 * Math.PI * 24;
 
 function todayKey(){ return new Date().toISOString().split('T')[0]; }
@@ -1059,6 +1061,27 @@ document.getElementById('wsInput').addEventListener('change',function(){ wd.ws=t
 // ═══════════════════════════════════════════════
 // NAV
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// BEDTIME INPUT
+// ═══════════════════════════════════════════════
+(function initBedtime(){
+  const bi=document.getElementById('bedtimeInput');
+  if(dd.bedtime) bi.value=dd.bedtime;
+  bi.addEventListener('click',e=>e.stopPropagation());
+  bi.addEventListener('change',()=>{ dd.bedtime=bi.value; saveDd(); });
+})();
+
+// ═══════════════════════════════════════════════
+// KEYBOARD ACCESSIBILITY
+// ═══════════════════════════════════════════════
+document.querySelectorAll('#triggerGrid .chip, .jstep, .mb, .exbtn, .pbtn').forEach(el=>{
+  if(!el.getAttribute('tabindex')) el.setAttribute('tabindex','0');
+  el.setAttribute('role','button');
+  el.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.click(); }
+  });
+});
+
 document.querySelectorAll('.ntab').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('act'));
