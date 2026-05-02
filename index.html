@@ -2,1098 +2,891 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PCOS Planner</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #F9F5EF;
+  --bg: #F8F3EC;
   --surface: #FFFFFF;
-  --surface-2: #F4EEE5;
-  --surface-3: #EDE4D7;
+  --surface-2: #F3EDE4;
+  --surface-3: #EAE2D6;
   --primary: #7A9B7C;
-  --primary-light: #B5CCAB;
-  --primary-dark: #4E7050;
-  --primary-pale: #E8F0E5;
+  --primary-l: #B5CCAB;
+  --primary-d: #4E6F50;
+  --primary-p: #E6EFE4;
   --accent: #C47B6A;
-  --accent-light: #F0DDD8;
-  --accent-dark: #9E5444;
+  --accent-l: #F0DDD8;
+  --accent-d: #9E5444;
   --tan: #C4A882;
-  --tan-light: #F0E6D6;
+  --tan-l: #F5EDE0;
+  --lav: #9587C0;
+  --lav-l: #EAE5F5;
   --text: #352318;
-  --text-muted: #8A7265;
-  --text-light: #B5A090;
-  --border: #E4D9CC;
-  --morning-bg: #FEF6E4;
-  --morning-border: #F0D89A;
-  --afternoon-bg: #E8F2E8;
-  --afternoon-border: #AECBAE;
-  --evening-bg: #EBE5F5;
-  --evening-border: #C4B5E0;
-  --shadow-sm: 0 1px 6px rgba(53,35,24,0.07);
-  --shadow: 0 2px 16px rgba(53,35,24,0.09);
-  --r: 18px;
-  --r-sm: 12px;
-  --r-xs: 8px;
+  --text-m: #8A7265;
+  --text-l: #B5A090;
+  --border: #E4D8CB;
+  --morn-bg: #FEF8EA;
+  --morn-b: #F0D99E;
+  --aftn-bg: #E8F2E8;
+  --aftn-b: #AECBAE;
+  --evng-bg: #EBE6F5;
+  --evng-b: #C4B8E0;
+  --sh: 0 1px 4px rgba(53,35,24,.06);
+  --shm: 0 2px 12px rgba(53,35,24,.09);
+  --r: 16px;
+  --rs: 10px;
+  --rx: 7px;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ══ HEADER ══ */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(53,35,24,.06)}
+.hdr-in{max-width:1240px;margin:0 auto;padding:12px 32px;display:flex;align-items:center;gap:24px}
+.brand{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.brand-text{}
+.app-name{font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:var(--primary-d);line-height:1;white-space:nowrap}
+.app-sub{font-size:10px;color:var(--text-m);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-top:1px}
+.hdr-mid{flex:1;display:flex;justify-content:center}
+.date-badge{background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:6px 18px;font-size:13px;font-weight:600;color:var(--text-m)}
+.hdr-right{flex-shrink:0}
 
-html { font-size: 16px; }
+/* ══ NAV TABS ══ */
+.nav{background:var(--surface);border-bottom:2px solid var(--border);position:sticky;top:61px;z-index:99}
+.nav-in{max-width:1240px;margin:0 auto;padding:0 32px;display:flex;gap:0}
+.ntab{display:flex;align-items:center;gap:7px;padding:13px 22px;border:none;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:700;color:var(--text-m);border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap;user-select:none}
+.ntab:hover{color:var(--primary-d)}
+.ntab.act{color:var(--primary-d);border-bottom-color:var(--primary)}
+.ntab svg{width:17px;height:17px}
 
-body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  max-width: 430px;
-  margin: 0 auto;
-  min-height: 100dvh;
-  overflow-x: hidden;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-font-smoothing: antialiased;
-}
+/* ══ CONTENT ══ */
+.wrap{max-width:1240px;margin:0 auto;padding:26px 32px 60px}
+.pane{display:none}
+.pane.act{display:block;animation:fu .22s ease}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── HEADER ── */
-.app-header {
-  background: var(--surface);
-  padding: 18px 20px 14px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 90;
-}
+/* ══ GRID LAYOUTS ══ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.col>*+*{margin-top:14px}
 
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
+/* ══ CARDS ══ */
+.card{background:var(--surface);border-radius:var(--r);padding:20px;box-shadow:var(--sh);border:1px solid rgba(228,216,203,.8)}
+.card+.card{margin-top:14px}
+.ct{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;line-height:1.2;margin-bottom:14px}
+.cl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-m);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.div{height:1px;background:var(--border);margin:13px 0}
 
-.app-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 24px;
-  font-style: italic;
-  color: var(--primary-dark);
-  line-height: 1;
-}
+/* ══ PROGRESS RING ══ */
+.ring{position:relative;width:58px;height:58px;flex-shrink:0}
+.ring svg{transform:rotate(-90deg)}
+.ring-tr{fill:none;stroke:var(--border);stroke-width:5}
+.ring-fl{fill:none;stroke:var(--primary);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .5s ease}
+.ring-tx{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--primary-d)}
 
-.app-tagline {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 500;
-  margin-top: 2px;
-  letter-spacing: 0.3px;
-}
+/* ══ MOOD ══ */
+.mood-row{display:flex;gap:7px;margin-top:10px}
+.mb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 3px;border:1.5px solid var(--border);border-radius:var(--rs);background:var(--surface-2);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;user-select:none}
+.mb .em{font-size:22px}
+.mb .lb{font-size:9px;color:var(--text-m);font-weight:700;text-align:center;line-height:1.2}
+.mb.sel{border-color:var(--accent);background:var(--accent-l)}
+.mb.sel .lb{color:var(--accent-d)}
 
-.cycle-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--primary-pale);
-  border: 1.5px solid var(--primary-light);
-  border-radius: 20px;
-  padding: 4px 10px 4px 8px;
-}
+/* ══ HABITS ══ */
+.hb{border-radius:var(--rs);border:1.5px solid;margin-bottom:10px;overflow:hidden}
+.hb.morn{background:var(--morn-bg);border-color:var(--morn-b)}
+.hb.aftn{background:var(--aftn-bg);border-color:var(--aftn-b)}
+.hb.evng{background:var(--evng-bg);border-color:var(--evng-b)}
+.hb-hd{padding:10px 14px 8px;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.hb.morn .hb-hd{color:#7A5800}
+.hb.aftn .hb-hd{color:#2A5830}
+.hb.evng .hb-hd{color:#4A3278}
+.hb-ct{font-size:10.5px;font-weight:600;background:rgba(255,255,255,.55);border-radius:20px;padding:2px 8px;opacity:.8}
+.hb-bd{padding:0 14px 10px}
+.hi{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;user-select:none}
+.hi+.hi{border-top:1px solid rgba(53,35,24,.06)}
+.hb-num{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.6);border:1.5px solid rgba(53,35,24,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text-m);flex-shrink:0;transition:all .18s}
+.hi.done .hb-num{background:var(--primary);border-color:var(--primary);color:white}
+.hl{font-size:13.5px;line-height:1.3}
+.hi.done .hl{color:var(--text-m);text-decoration:line-through;text-decoration-color:var(--text-l)}
 
-.cycle-pill-label {
-  font-size: 11px;
-  color: var(--primary-dark);
-  font-weight: 600;
-  white-space: nowrap;
-}
+/* ══ SCALES ══ */
+.srow{display:flex;gap:5px;margin-bottom:11px}
+.sbtn{flex:1;padding:7px 2px;border:1.5px solid var(--border);border-radius:var(--rx);background:var(--surface-2);cursor:pointer;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--text-m);text-align:center;transition:all .15s;line-height:1.3;user-select:none}
+.sbtn.sel{background:var(--primary);border-color:var(--primary);color:white}
 
-.cycle-pill input {
-  width: 32px;
-  border: none;
-  background: transparent;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--primary-dark);
-  text-align: center;
-  padding: 0;
-}
-.cycle-pill input:focus { outline: none; }
-.cycle-pill input::placeholder { color: var(--primary-light); }
+/* ══ CHIPS ══ */
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;background:var(--surface-2);cursor:pointer;font-size:12.5px;font-family:'Nunito',sans-serif;transition:all .15s;user-select:none;font-weight:500}
+.chip.on{background:var(--accent-l);border-color:var(--accent);color:var(--accent-d);font-weight:700}
 
-.header-date {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 8px;
-  font-weight: 500;
-}
+/* ══ EXERCISE ══ */
+.exrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.exbtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 4px;border:1.5px solid var(--border);border-radius:var(--rs);background:var(--surface-2);cursor:pointer;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;color:var(--text-m);transition:all .15s;user-select:none;text-align:center}
+.exbtn .xi{font-size:20px}
+.exbtn.sel{background:var(--primary-p);border-color:var(--primary-l);color:var(--primary-d)}
 
-/* ── TABS ── */
-.tab-pane {
-  display: none;
-  padding: 16px 16px 110px;
-  animation: fadeUp 0.22s ease;
-}
-.tab-pane.active { display: block; }
+/* ══ PAIN ══ */
+.painrow{display:flex;gap:7px;margin-top:6px}
+.pbtn{flex:1;padding:8px;border:1.5px solid var(--border);border-radius:var(--rs);background:var(--surface-2);cursor:pointer;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;text-align:center;color:var(--text-m);transition:all .15s;user-select:none;display:flex;align-items:center;justify-content:center;gap:4px}
+.pbtn.sel{background:var(--accent-l);border-color:var(--accent);color:var(--accent-d)}
+.no-pain.sel{background:var(--primary-p);border-color:var(--primary-l);color:var(--primary-d)}
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* ══ SPECIAL INPUTS ══ */
+.win-in{width:100%;padding:10px 14px;border:1.5px solid var(--tan);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:13.5px;color:var(--text);background:var(--tan-l);margin-top:6px;transition:border-color .15s}
+.win-in:focus{outline:none;border-color:var(--tan)}
+.win-in::placeholder{color:var(--text-l)}
+.notes-ta{width:100%;min-height:80px;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13.5px;color:var(--text);background:var(--surface-2);resize:none;margin-top:6px;transition:border-color .15s}
+.notes-ta:focus{outline:none;border-color:var(--primary)}
+.notes-ta::placeholder{color:var(--text-l)}
 
-/* ── BOTTOM NAV ── */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  display: flex;
-  padding: 6px 0 max(6px, env(safe-area-inset-bottom));
-  z-index: 90;
-  box-shadow: 0 -2px 16px rgba(53,35,24,0.07);
-}
+/* ══ MEAL PLAN (desktop grid) ══ */
+.meal-hdr-row{display:grid;grid-template-columns:100px repeat(7,1fr);border:1px solid var(--border);border-radius:var(--r) var(--r) 0 0;overflow:hidden;border-bottom:none}
+.mhc{background:var(--primary);color:white;font-size:11px;font-weight:700;text-align:center;padding:10px 4px;text-transform:uppercase;letter-spacing:.4px;border-right:1px solid rgba(255,255,255,.15)}
+.mhc:first-child{background:var(--primary-d)}
+.mhc:last-child{border-right:none}
+.meal-body{border:1px solid var(--border);border-radius:0 0 var(--r) var(--r);overflow:hidden}
+.meal-row{display:grid;grid-template-columns:100px repeat(7,1fr);border-bottom:1px solid var(--border)}
+.meal-row:last-child{border-bottom:none}
+.mtype{background:var(--surface-2);padding:10px;font-size:11px;font-weight:700;color:var(--text-m);display:flex;align-items:center;gap:5px;border-right:1px solid var(--border)}
+.meal-cell{border-right:1px solid var(--border);padding:0}
+.meal-cell:last-child{border-right:none}
+.meal-ta{width:100%;height:100%;min-height:62px;padding:8px 10px;border:none;background:transparent;resize:none;font-family:'Nunito',sans-serif;font-size:12.5px;color:var(--text);line-height:1.4}
+.meal-ta:focus{outline:none;background:var(--primary-p)}
+.meal-ta::placeholder{color:var(--text-l);font-size:11.5px}
 
-.nav-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 4px 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-light);
-  font-size: 10px;
-  font-weight: 600;
-  font-family: 'Nunito', sans-serif;
-  letter-spacing: 0.2px;
-  transition: color 0.2s;
-  user-select: none;
-}
-.nav-btn.active { color: var(--primary-dark); }
-.nav-btn svg { width: 22px; height: 22px; transition: transform 0.2s; }
-.nav-btn.active svg { transform: scale(1.1); }
+/* ══ MEAL PLAN (mobile fallback) ══ */
+.meal-mob{display:none}
+.day-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.day-pills::-webkit-scrollbar{display:none}
+.dpill{flex-shrink:0;padding:7px 15px;border-radius:20px;border:none;background:var(--surface-2);cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--text-m);transition:all .15s;user-select:none}
+.dpill.act{background:var(--primary);color:white}
+.mslot{margin-bottom:11px}
+.mslot-lbl{font-size:11px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.mslot-ta{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:13.5px;color:var(--text);background:var(--surface-2);resize:none}
+.mslot-ta:focus{outline:none;border-color:var(--primary)}
+.mslot-ta::placeholder{color:var(--text-l)}
 
-/* ── CARD ── */
-.card {
-  background: var(--surface);
-  border-radius: var(--r);
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(228,217,204,0.6);
-}
+/* ══ OVERVIEW ══ */
+.ov-banner{background:linear-gradient(130deg,var(--primary-d) 0%,var(--primary) 100%);border-radius:var(--r);padding:24px 32px;color:white;margin-bottom:20px;position:relative;overflow:hidden}
+.ov-banner::after{content:'';position:absolute;right:-30px;top:-30px;width:180px;height:180px;background:rgba(255,255,255,.07);border-radius:50%}
+.ov-banner::before{content:'';position:absolute;right:40px;bottom:-40px;width:120px;height:120px;background:rgba(255,255,255,.04);border-radius:50%}
+.ov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative;z-index:1}
+.ov-stat{}
+.ov-val{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;line-height:1}
+.ov-lbl{font-size:11px;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
 
-.card-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.2;
-}
+.wbar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:12px}
+.wc{display:flex;flex-direction:column;align-items:center;gap:5px}
+.wc-lbl{font-size:10px;font-weight:700;color:var(--text-m)}
+.wc-dot{width:36px;height:36px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text-m)}
+.wc-dot.tr{background:var(--primary-l);color:var(--primary-d)}
+.wc-dot.td{background:var(--primary);color:white}
+.wc-pct{font-size:10px;color:var(--text-m);font-weight:600}
 
-.card-subtitle {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
+/* ══ JOURNEY (goals) ══ */
+.journey-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.jstep{border:1.5px solid var(--border);border-radius:var(--rs);padding:16px;text-align:center;transition:all .2s;cursor:pointer;user-select:none;background:var(--surface-2)}
+.jstep.done{background:var(--primary-p);border-color:var(--primary-l)}
+.js-icon{font-size:30px;margin-bottom:8px}
+.js-title{font-size:13px;font-weight:700;color:var(--text)}
+.js-desc{font-size:11px;color:var(--text-m);margin-top:3px;line-height:1.4}
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
+/* ══ FOOD GUIDE ══ */
+.food-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.fg{}
+.fg-hd{font-size:13px;font-weight:700;padding:10px 14px;border-radius:var(--rs) var(--rs) 0 0;color:white}
+.fg.best .fg-hd{background:var(--primary)}
+.fg.worst .fg-hd{background:var(--accent)}
+.fg.supps .fg-hd{background:var(--tan)}
+.flist{border:1.5px solid var(--border);border-top:none;border-radius:0 0 var(--rs) var(--rs);background:var(--surface);overflow:hidden}
+.frow{display:flex;align-items:flex-start;gap:10px;padding:9px 14px;font-size:13px}
+.frow+.frow{border-top:1px solid var(--border)}
+.fem{font-size:17px;flex-shrink:0;margin-top:1px}
+.fdesc{font-size:11px;color:var(--text-m);margin-top:2px}
 
-/* ── PROGRESS RING ── */
-.ring-wrap {
-  position: relative;
-  width: 54px;
-  height: 54px;
-  flex-shrink: 0;
-}
-.ring-wrap svg { transform: rotate(-90deg); }
-.ring-track { fill: none; stroke: var(--border); stroke-width: 4.5; }
-.ring-fill {
-  fill: none;
-  stroke: var(--primary);
-  stroke-width: 4.5;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.5s ease;
-}
-.ring-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--primary-dark);
-}
-
-/* ── MOOD ── */
-.mood-row {
-  display: flex;
-  gap: 6px;
-  margin-top: 10px;
-}
-.mood-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 8px 2px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  background: var(--surface-2);
-  cursor: pointer;
-  font-family: 'Nunito', sans-serif;
-  transition: all 0.15s;
-  user-select: none;
-}
-.mood-btn .emoji { font-size: 20px; }
-.mood-btn .label { font-size: 9px; color: var(--text-muted); font-weight: 600; text-align: center; line-height: 1.2; }
-.mood-btn.selected { border-color: var(--accent); background: var(--accent-light); }
-.mood-btn.selected .label { color: var(--accent-dark); }
-
-/* ── HABIT BLOCK ── */
-.habit-block {
-  border-radius: var(--r-sm);
-  overflow: hidden;
-  margin-bottom: 10px;
-  border: 1.5px solid;
-}
-.habit-block.morning { background: var(--morning-bg); border-color: var(--morning-border); }
-.habit-block.afternoon { background: var(--afternoon-bg); border-color: var(--afternoon-border); }
-.habit-block.evening { background: var(--evening-bg); border-color: var(--evening-border); }
-
-.habit-block-header {
-  padding: 10px 14px 8px;
-  font-size: 13px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.habit-block.morning .habit-block-header { color: #7A5C00; }
-.habit-block.afternoon .habit-block-header { color: #2D5E2D; }
-.habit-block.evening .habit-block-header { color: #4A3678; }
-
-.habit-block-body { padding: 0 14px 8px; }
-
-.habit-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  cursor: pointer;
-  user-select: none;
-}
-.habit-item + .habit-item {
-  border-top: 1px solid rgba(53,35,24,0.07);
-}
-
-.check-circle {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid rgba(53,35,24,0.2);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.18s;
-  background: rgba(255,255,255,0.7);
-}
-.habit-item.done .check-circle {
-  background: var(--primary);
-  border-color: var(--primary);
-}
-.check-circle svg {
-  width: 12px; height: 12px;
-  stroke: white;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-.habit-item.done .check-circle svg { opacity: 1; }
-
-.habit-label {
-  font-size: 14px;
-  line-height: 1.35;
-  transition: color 0.15s;
-}
-.habit-item.done .habit-label {
-  color: var(--text-muted);
-  text-decoration: line-through;
-  text-decoration-color: var(--text-light);
-}
-
-/* ── SCALES ── */
-.section-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.scale-row {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 14px;
-}
-.scale-btn {
-  flex: 1;
-  padding: 8px 2px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-xs);
-  background: var(--surface-2);
-  cursor: pointer;
-  font-family: 'Nunito', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-align: center;
-  transition: all 0.15s;
-  line-height: 1.3;
-  user-select: none;
-}
-.scale-btn.sel { background: var(--primary); border-color: var(--primary); color: white; }
-
-/* ── TRIGGERS ── */
-.chip-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 8px;
-}
-.chip {
-  padding: 6px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  background: var(--surface-2);
-  cursor: pointer;
-  font-size: 13px;
-  font-family: 'Nunito', sans-serif;
-  transition: all 0.15s;
-  user-select: none;
-}
-.chip.on { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
-
-/* ── NOTES ── */
-.notes-ta {
-  width: 100%;
-  min-height: 72px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 10px 12px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  background: var(--surface-2);
-  resize: none;
-  margin-top: 8px;
-}
-.notes-ta:focus { outline: none; border-color: var(--primary); }
-.notes-ta::placeholder { color: var(--text-light); }
-
-/* ── DIVIDER ── */
-.divider { height: 1px; background: var(--border); margin: 14px 0 12px; }
-
-/* ── PAGE TITLE ── */
-.page-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 22px;
-  font-style: italic;
-  margin-bottom: 14px;
-  color: var(--text);
-}
-
-/* ── MEAL PLAN ── */
-.day-scroller {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  margin-bottom: 12px;
-  scrollbar-width: none;
-}
-.day-scroller::-webkit-scrollbar { display: none; }
-
-.day-pill {
-  flex-shrink: 0;
-  padding: 7px 15px;
-  border-radius: 20px;
-  border: none;
-  background: var(--surface-2);
-  cursor: pointer;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-muted);
-  transition: all 0.15s;
-  user-select: none;
-}
-.day-pill.active { background: var(--primary); color: white; }
-
-.meal-slot { margin-bottom: 12px; }
-.meal-slot-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 5px;
-}
-.meal-ta {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  background: var(--surface-2);
-  resize: none;
-  min-height: 44px;
-  transition: border-color 0.15s;
-}
-.meal-ta:focus { outline: none; border-color: var(--primary); }
-.meal-ta::placeholder { color: var(--text-light); }
-
-/* ── OVERVIEW ── */
-.stat-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.stat-card {
-  background: var(--surface);
-  border-radius: var(--r);
-  padding: 14px 12px;
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(228,217,204,0.6);
-}
-.stat-value {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 38px;
-  font-weight: 600;
-  color: var(--primary-dark);
-  line-height: 1;
-}
-.stat-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin-top: 4px;
-}
-
-.week-bar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-top: 10px;
-}
-.week-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-}
-.week-cell-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-.week-cell-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  transition: all 0.2s;
-}
-.week-cell-dot.tracked { background: var(--primary-light); color: var(--primary-dark); }
-.week-cell-dot.today { background: var(--primary); color: white; }
-
-/* ── MEASUREMENT INPUTS ── */
-.measure-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 8px;
-}
-.measure-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  margin-bottom: 5px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.measure-input {
-  width: 100%;
-  padding: 9px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-xs);
-  font-family: 'Nunito', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-  background: var(--surface-2);
-  text-align: center;
-  transition: border-color 0.15s;
-}
-.measure-input:focus { outline: none; border-color: var(--primary); }
-.measure-input::placeholder { color: var(--text-light); font-weight: 400; }
-
-/* ── FOOD GUIDE ── */
-.food-group { margin-bottom: 14px; }
-.food-group-header {
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 9px 14px;
-  border-radius: var(--r-sm) var(--r-sm) 0 0;
-  letter-spacing: 0.2px;
-}
-.food-group.best .food-group-header { background: var(--primary); color: white; }
-.food-group.worst .food-group-header { background: var(--accent); color: white; }
-.food-group.supps .food-group-header { background: var(--tan); color: white; }
-
-.food-list {
-  border: 1.5px solid var(--border);
-  border-top: none;
-  border-radius: 0 0 var(--r-sm) var(--r-sm);
-  overflow: hidden;
-  background: var(--surface);
-}
-.food-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 9px 14px;
-  font-size: 13.5px;
-}
-.food-row + .food-row { border-top: 1px solid var(--border); }
-.food-emoji { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
-.food-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-/* ── SAVE TOAST ── */
-.toast {
-  position: fixed;
-  bottom: 82px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--primary-dark);
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 7px 16px;
-  border-radius: 20px;
-  opacity: 0;
-  transition: opacity 0.25s;
-  z-index: 200;
-  pointer-events: none;
-  white-space: nowrap;
-}
-.toast.show { opacity: 1; }
-
-/* ── BANNER (top of overview) ── */
-.week-banner {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-  border-radius: var(--r);
-  padding: 16px;
-  color: white;
-  margin-bottom: 12px;
-  position: relative;
-  overflow: hidden;
-}
-.week-banner::before {
-  content: '🌿';
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 40px;
-  opacity: 0.3;
-}
-.week-banner-title { font-size: 12px; font-weight: 700; opacity: 0.8; letter-spacing: 0.5px; text-transform: uppercase; }
-.week-banner-msg {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
-  font-style: italic;
-  margin-top: 4px;
-  line-height: 1.3;
-}
-
-/* ── EMPTY MSG ── */
-.empty-msg { text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px; }
-
-/* ── MISC ── */
+/* ══ MEASURE ══ */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.mlbl{font-size:11px;font-weight:700;color:var(--text-m);margin-bottom:5px}
+.min{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--rx);font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--text);background:var(--surface-2);text-align:center;transition:border-color .15s}
+.min:focus{outline:none;border-color:var(--primary)}
+.min::placeholder{color:var(--text-l);font-weight:400}
 input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
-input[type=number] { -moz-appearance: textfield; }
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--primary-d);color:white;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;opacity:0;transition:opacity .25s;z-index:500;pointer-events:none}
+.toast.show{opacity:1}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:960px){
+  .hdr-in,.nav-in,.wrap{padding-left:20px;padding-right:20px}
+  .g2{grid-template-columns:1fr}
+  .food-cols{grid-template-columns:1fr}
+  .ov-grid{grid-template-columns:repeat(2,1fr)}
+  .journey-grid{grid-template-columns:repeat(2,1fr)}
+  .meal-hdr-row,.meal-body{display:none}
+  .meal-mob{display:block}
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .hdr-in{padding:10px 16px}
+  .nav-in{padding:0 8px;overflow-x:auto;scrollbar-width:none}
+  .nav-in::-webkit-scrollbar{display:none}
+  .wrap{padding:14px 14px 80px}
+  .ntab{padding:11px 14px;font-size:13px}
+  .hdr-right{display:none}
+  .ov-grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .ov-val{font-size:34px}
+  .ov-banner{padding:18px 20px}
+  .journey-grid{grid-template-columns:repeat(2,1fr)}
+  .exrow{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:1fr 1fr}
+  .nav{top:57px}
+  .app-name{font-size:22px}
+}
+@media(max-width:400px){
+  .mood-row{gap:4px}
+  .mb .em{font-size:19px}
+}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="app-header">
-  <div class="header-top">
-    <div>
-      <div class="app-name">PCOS Planner 🌿</div>
-      <div class="app-tagline">Tvůj každodenní průvodce</div>
-    </div>
-    <div class="cycle-pill">
-      <span class="cycle-pill-label">Den cyklu</span>
-      <input type="number" id="cycleDayInput" min="1" max="45" placeholder="?">
+<!-- ══════ HEADER ══════ -->
+<header class="hdr">
+<div class="hdr-in">
+  <div class="brand">
+    <!-- SVG spearmint sprig -->
+    <svg width="44" height="52" viewBox="0 0 44 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22 50 C21 42 19 36 18 28 C17 22 18 15 22 10" stroke="#7A9B7C" stroke-width="2" stroke-linecap="round"/>
+      <path d="M22 10 C18 2 8 3 6 12 C11 10 17 11 22 10Z" fill="#7A9B7C" opacity=".85"/>
+      <path d="M22 10 C26 2 36 3 38 12 C33 10 27 11 22 10Z" fill="#7A9B7C" opacity=".85"/>
+      <path d="M20 22 C15 16 6 19 6 28 C11 24 17 23 20 22Z" fill="#7A9B7C" opacity=".65"/>
+      <path d="M20 22 C25 16 34 19 34 28 C29 24 23 23 20 22Z" fill="#7A9B7C" opacity=".65"/>
+      <path d="M18 34 C13 29 5 33 6 42 C11 37 16 36 18 34Z" fill="#7A9B7C" opacity=".45"/>
+      <path d="M18 34 C23 29 31 33 30 42 C25 37 20 36 18 34Z" fill="#7A9B7C" opacity=".45"/>
+      <circle cx="22" cy="8" r="2.5" fill="#7A9B7C" opacity=".9"/>
+      <circle cx="19" cy="5" r="1.5" fill="#7A9B7C" opacity=".7"/>
+      <circle cx="25" cy="5" r="1.5" fill="#7A9B7C" opacity=".7"/>
+    </svg>
+    <div class="brand-text">
+      <div class="app-name">PCOS Planner</div>
+      <div class="app-sub">Tvůj každodenní průvodce</div>
     </div>
   </div>
-  <div class="header-date" id="headerDate"></div>
+
+  <div class="hdr-mid">
+    <div class="date-badge" id="dateBadge"></div>
+  </div>
+
+  <!-- decorative botanical - right side -->
+  <div class="hdr-right">
+    <svg width="140" height="52" viewBox="0 0 140 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- branch -->
+      <path d="M10 42 C30 38 60 30 90 26 C110 23 125 22 135 20" stroke="#7A9B7C" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      <!-- leaves -->
+      <ellipse cx="35" cy="28" rx="12" ry="6" fill="#7A9B7C" opacity=".2" transform="rotate(-20 35 28)"/>
+      <ellipse cx="56" cy="22" rx="10" ry="5" fill="#7A9B7C" opacity=".25" transform="rotate(-15 56 22)"/>
+      <ellipse cx="78" cy="18" rx="11" ry="5" fill="#C47B6A" opacity=".18" transform="rotate(-10 78 18)"/>
+      <ellipse cx="100" cy="16" rx="9" ry="4" fill="#7A9B7C" opacity=".2" transform="rotate(-8 100 16)"/>
+      <ellipse cx="118" cy="14" rx="8" ry="4" fill="#7A9B7C" opacity=".15" transform="rotate(-5 118 14)"/>
+      <!-- small accent dots -->
+      <circle cx="45" cy="38" r="3" fill="#C47B6A" opacity=".2"/>
+      <circle cx="70" cy="34" r="2.5" fill="#7A9B7C" opacity=".2"/>
+      <circle cx="95" cy="30" r="2" fill="#C4A882" opacity=".25"/>
+    </svg>
+  </div>
+</div>
 </header>
 
-<!-- TOAST -->
-<div class="toast" id="toast">Uloženo ✓</div>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- TAB: DNES -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="tab-pane active" id="pane-dnes">
-
-  <!-- Mood + Progress -->
-  <div class="card">
-    <div class="card-header">
-      <div>
-        <div class="card-title">Jak se dnes cítíš?</div>
-        <div class="card-subtitle">Energie & nálada dne</div>
-      </div>
-      <div class="ring-wrap">
-        <svg width="54" height="54" viewBox="0 0 54 54">
-          <circle class="ring-track" cx="27" cy="27" r="23"/>
-          <circle class="ring-fill" id="ringFill" cx="27" cy="27" r="23"/>
-        </svg>
-        <div class="ring-text" id="ringText">0%</div>
-      </div>
-    </div>
-    <div class="mood-row" id="moodRow">
-      <button class="mood-btn" data-v="1"><span class="emoji">😴</span><span class="label">Bez energie</span></button>
-      <button class="mood-btn" data-v="2"><span class="emoji">😔</span><span class="label">Hůře</span></button>
-      <button class="mood-btn" data-v="3"><span class="emoji">😐</span><span class="label">Nic moc</span></button>
-      <button class="mood-btn" data-v="4"><span class="emoji">🙂</span><span class="label">Dobře</span></button>
-      <button class="mood-btn" data-v="5"><span class="emoji">✨</span><span class="label">Skvěle!</span></button>
-    </div>
-  </div>
-
-  <!-- Morning habits -->
-  <div class="habit-block morning">
-    <div class="habit-block-header">🌅 Ráno</div>
-    <div class="habit-block-body" id="hab-morning">
-      <div class="habit-item" data-b="morning" data-i="0"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Sklenka vody před kávou</span></div>
-      <div class="habit-item" data-b="morning" data-i="1"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Protein do 60 minut od vstávání</span></div>
-      <div class="habit-item" data-b="morning" data-i="2"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Pohyb 10–15 minut (chůze, strečink)</span></div>
-      <div class="habit-item" data-b="morning" data-i="3"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">5 minut venku – ranní světlo</span></div>
-    </div>
-  </div>
-
-  <!-- Afternoon habits -->
-  <div class="habit-block afternoon">
-    <div class="habit-block-header">☀️ Odpoledne</div>
-    <div class="habit-block-body" id="hab-afternoon">
-      <div class="habit-item" data-b="afternoon" data-i="0"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Vybalancovaný oběd (bílkoviny + vláknina)</span></div>
-      <div class="habit-item" data-b="afternoon" data-i="1"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Procházka po jídle (10–15 min)</span></div>
-      <div class="habit-item" data-b="afternoon" data-i="2"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">1,5 litru vody do odpoledne</span></div>
-    </div>
-  </div>
-
-  <!-- Evening habits -->
-  <div class="habit-block evening">
-    <div class="habit-block-header">🌙 Večer</div>
-    <div class="habit-block-body" id="hab-evening">
-      <div class="habit-item" data-b="evening" data-i="0"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Zdravá svačina – bez cukru</span></div>
-      <div class="habit-item" data-b="evening" data-i="1"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Relaxace (dech, meditace, čtení)</span></div>
-      <div class="habit-item" data-b="evening" data-i="2"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Bez ultra-zpracovaných jídel</span></div>
-    </div>
-  </div>
-
-  <!-- Symptoms -->
-  <div class="card">
-    <div class="card-title" style="margin-bottom:14px">Jak se tělo cítilo?</div>
-
-    <div class="section-label">💤 Spánek</div>
-    <div class="scale-row" id="sc-sleep">
-      <button class="scale-btn" data-s="sleep" data-v="1">Špatně</button>
-      <button class="scale-btn" data-s="sleep" data-v="2">Ušlo</button>
-      <button class="scale-btn" data-s="sleep" data-v="3">Dobře</button>
-      <button class="scale-btn" data-s="sleep" data-v="4">Skvěle</button>
-    </div>
-
-    <div class="section-label">💪 Energie</div>
-    <div class="scale-row" id="sc-energy">
-      <button class="scale-btn" data-s="energy" data-v="1">Vyčerpaná</button>
-      <button class="scale-btn" data-s="energy" data-v="2">Unavená</button>
-      <button class="scale-btn" data-s="energy" data-v="3">V pohodě</button>
-      <button class="scale-btn" data-s="energy" data-v="4">Plná sil</button>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-label">🫃 Nafouklnutí</div>
-    <div class="scale-row">
-      <button class="scale-btn" data-s="bloat" data-v="1">Vůbec</button>
-      <button class="scale-btn" data-s="bloat" data-v="2">Trochu</button>
-      <button class="scale-btn" data-s="bloat" data-v="3">Středně</button>
-      <button class="scale-btn" data-s="bloat" data-v="4">Hodně</button>
-    </div>
-
-    <div class="section-label">🧠 Mozková mlha</div>
-    <div class="scale-row">
-      <button class="scale-btn" data-s="fog" data-v="1">Vůbec</button>
-      <button class="scale-btn" data-s="fog" data-v="2">Trochu</button>
-      <button class="scale-btn" data-s="fog" data-v="3">Středně</button>
-      <button class="scale-btn" data-s="fog" data-v="4">Hodně</button>
-    </div>
-
-    <div class="section-label">😤 Kůže / akné</div>
-    <div class="scale-row">
-      <button class="scale-btn" data-s="skin" data-v="1">OK</button>
-      <button class="scale-btn" data-s="skin" data-v="2">Trochu</button>
-      <button class="scale-btn" data-s="skin" data-v="3">Středně</button>
-      <button class="scale-btn" data-s="skin" data-v="4">Hodně</button>
-    </div>
-  </div>
-
-  <!-- Triggers -->
-  <div class="card">
-    <div class="card-title">🔥 Potenciální spouštěče zánětu</div>
-    <div class="chip-grid" id="triggerGrid">
-      <div class="chip" data-t="sugar">🍬 Cukr</div>
-      <div class="chip" data-t="dairy">🥛 Mléčné</div>
-      <div class="chip" data-t="carbs">🍞 Bílé sacharidy</div>
-      <div class="chip" data-t="sleep">😴 Špatný spánek</div>
-      <div class="chip" data-t="stress">😰 Stres</div>
-      <div class="chip" data-t="skipped">⏰ Vynechané jídlo</div>
-      <div class="chip" data-t="alcohol">🍷 Alkohol</div>
-      <div class="chip" data-t="processed">🍕 Ultra-zprac. jídla</div>
-    </div>
-  </div>
-
-  <!-- Notes -->
-  <div class="card">
-    <div class="card-title">📝 Poznámky</div>
-    <textarea class="notes-ta" id="notesInput" placeholder="Co ses dnes naučila? Co fungovalo? Jak ses cítila?"></textarea>
-  </div>
-
-</div><!-- /pane-dnes -->
-
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- TAB: JÍDLO -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="tab-pane" id="pane-jidlo">
-  <div class="page-title">Týdenní jídelní plán</div>
-
-  <div class="day-scroller" id="dayScroller">
-    <button class="day-pill active" data-d="po">Pondělí</button>
-    <button class="day-pill" data-d="ut">Úterý</button>
-    <button class="day-pill" data-d="st">Středa</button>
-    <button class="day-pill" data-d="ct">Čtvrtek</button>
-    <button class="day-pill" data-d="pa">Pátek</button>
-    <button class="day-pill" data-d="so">Sobota</button>
-    <button class="day-pill" data-d="ne">Neděle</button>
-  </div>
-
-  <div class="card" id="mealCard">
-    <div class="meal-slot">
-      <div class="meal-slot-label">🌅 Snídaně</div>
-      <textarea class="meal-ta" data-m="snidane" placeholder="Co budeš jíst k snídani?" rows="2"></textarea>
-    </div>
-    <div class="meal-slot">
-      <div class="meal-slot-label">☀️ Oběd</div>
-      <textarea class="meal-ta" data-m="obed" placeholder="Co budeš jíst k obědu?" rows="2"></textarea>
-    </div>
-    <div class="meal-slot">
-      <div class="meal-slot-label">🌙 Večeře</div>
-      <textarea class="meal-ta" data-m="vecere" placeholder="Co budeš jíst k večeři?" rows="2"></textarea>
-    </div>
-    <div class="meal-slot">
-      <div class="meal-slot-label">🍎 Svačina</div>
-      <textarea class="meal-ta" data-m="svacina" placeholder="Zdravá svačinka?" rows="1"></textarea>
-    </div>
-    <div class="meal-slot">
-      <div class="meal-slot-label">💊 Doplňky stravy</div>
-      <textarea class="meal-ta" data-m="supps" placeholder="Myo-inositol, vitamín D, omega-3..." rows="1"></textarea>
-    </div>
-  </div>
-</div>
-
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- TAB: PŘEHLED -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="tab-pane" id="pane-prehled">
-  <div class="week-banner">
-    <div class="week-banner-title">Tento týden</div>
-    <div class="week-banner-msg" id="weekMsg">Jen tak dál! 🌱</div>
-  </div>
-
-  <div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-value" id="statPct">—</div>
-      <div class="stat-label">průměr návyků</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statDays">0</div>
-      <div class="stat-label">dní s daty</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title" style="margin-bottom:10px">Aktivita v týdnu</div>
-    <div class="week-bar" id="weekBar"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title" style="margin-bottom:8px">Nejčastější spouštěče</div>
-    <div class="chip-grid" id="triggerSummary"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title" style="margin-bottom:4px">Tělesné míry <span style="font-size:13px;font-weight:400;color:var(--text-muted)">(volitelné)</span></div>
-    <div class="measure-grid">
-      <div>
-        <div class="measure-label">⚖️ Váha (kg)</div>
-        <input class="measure-input" type="number" step="0.1" id="weightInput" placeholder="—">
-      </div>
-      <div>
-        <div class="measure-label">📏 Pas (cm)</div>
-        <input class="measure-input" type="number" step="0.5" id="waistInput" placeholder="—">
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- TAB: POTRAVINY -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="tab-pane" id="pane-potraviny">
-  <div class="page-title">Průvodce potravinami</div>
-  <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Rychlý referenční přehled pro PCOS – co tělu pomáhá a čemu se vyplatí vyhnout.</p>
-
-  <div class="food-group best">
-    <div class="food-group-header">✅ Nejlepší potraviny pro PCOS</div>
-    <div class="food-list">
-      <div class="food-row"><span class="food-emoji">🥬</span><div><div>Listová zelenina</div><div class="food-desc">špenát, kapusta, rukola – hořčík, železo</div></div></div>
-      <div class="food-row"><span class="food-emoji">🫐</span><div><div>Bobulové ovoce</div><div class="food-desc">borůvky, maliny, jahody – nízké GI, antioxidanty</div></div></div>
-      <div class="food-row"><span class="food-emoji">🐟</span><div><div>Tučné ryby</div><div class="food-desc">makrela, sardinky, losos – EPA + DHA omega-3</div></div></div>
-      <div class="food-row"><span class="food-emoji">🥑</span><div><div>Avokádo</div><div class="food-desc">zdravé tuky, vláknina, draslík</div></div></div>
-      <div class="food-row"><span class="food-emoji">🫘</span><div><div>Luštěniny</div><div class="food-desc">čočka, cizrna, fazole – GI ~30, vláknina, bílkoviny</div></div></div>
-      <div class="food-row"><span class="food-emoji">🌾</span><div><div>Pohanka</div><div class="food-desc">přirozený zdroj D-chiro-inositolu</div></div></div>
-      <div class="food-row"><span class="food-emoji">🌱</span><div><div>Lněné semínko</div><div class="food-desc">lignany – snižují testosteron až o 70 %</div></div></div>
-      <div class="food-row"><span class="food-emoji">🥦</span><div><div>Brukvovitá zelenina</div><div class="food-desc">brokolice, karfiol – I3C/DIM pro detox estrogenů</div></div></div>
-      <div class="food-row"><span class="food-emoji">🌿</span><div><div>Mátový čaj (spearmint)</div><div class="food-desc">pouze Mentha spicata – antiandrogenní efekt</div></div></div>
-      <div class="food-row"><span class="food-emoji">🥛</span><div><div>Kefír & bílý jogurt</div><div class="food-desc">probiotika, estrobolom, mikrobiom</div></div></div>
-      <div class="food-row"><span class="food-emoji">🫚</span><div><div>Olivový olej (extra panenský)</div><div class="food-desc">protizánětlivé mono-nenasycené tuky</div></div></div>
-      <div class="food-row"><span class="food-emoji">🌰</span><div><div>Ořechy a semínka</div><div class="food-desc">vlašské ořechy, mandle, chia, dýňová semínka</div></div></div>
-      <div class="food-row"><span class="food-emoji">🍵</span><div><div>Skořice</div><div class="food-desc">inzulinová senzitivita, stabilizace glykémie</div></div></div>
-      <div class="food-row"><span class="food-emoji">🟡</span><div><div>Kurkuma + pepř</div><div class="food-desc">silně protizánětlivé – piperin zvyšuje vstřebávání</div></div></div>
-    </div>
-  </div>
-
-  <div class="food-group worst" style="margin-top:14px">
-    <div class="food-group-header">❌ Čemu se raději vyhnout</div>
-    <div class="food-list">
-      <div class="food-row"><span class="food-emoji">🍬</span><div><div>Cukr a sladkosti</div><div class="food-desc">prudce zvyšuje inzulin → spouští androgeny</div></div></div>
-      <div class="food-row"><span class="food-emoji">🥤</span><div><div>Slazené nápoje a džusy</div><div class="food-desc">fruktóza zatěžuje játra, GI mimo kontrolu</div></div></div>
-      <div class="food-row"><span class="food-emoji">🍞</span><div><div>Bílé pečivo a bílá rýže</div><div class="food-desc">vysoké GI, minimum vlákniny</div></div></div>
-      <div class="food-row"><span class="food-emoji">🍕</span><div><div>Ultra-zpracovaná jídla</div><div class="food-desc">trans-tuky, aditiva, zánětlivé</div></div></div>
-      <div class="food-row"><span class="food-emoji">🍺</span><div><div>Alkohol</div><div class="food-desc">narušuje detox estrogenů v játrech</div></div></div>
-      <div class="food-row"><span class="food-emoji">🥣</span><div><div>Slazené cereálie</div><div class="food-desc">skrytý cukr, vysoké GI</div></div></div>
-    </div>
-  </div>
-
-  <div class="food-group supps" style="margin-top:14px">
-    <div class="food-group-header">💊 Doplňky s největší evidencí</div>
-    <div class="food-list">
-      <div class="food-row"><span class="food-emoji">🔬</span><div><div><strong>Myo-inositol 4g + D-chiro-inositol 100mg</strong></div><div class="food-desc">Nejsilnější evidence – poměr 40:1, inzulinová rezistence, SHBG</div></div></div>
-      <div class="food-row"><span class="food-emoji">☀️</span><div><div><strong>Vitamín D 1 000–4 000 IU/den</strong></div><div class="food-desc">Deficit u 67–86 % žen s PCOS</div></div></div>
-      <div class="food-row"><span class="food-emoji">🐟</span><div><div><strong>Omega-3 1–3g EPA+DHA/den</strong></div><div class="food-desc">Snižuje testosteron a CRP (zánět)</div></div></div>
-      <div class="food-row"><span class="food-emoji">⚡</span><div><div><strong>Hořčík 250–400 mg/den</strong></div><div class="food-desc">Inzulinová senzitivita, spánek, stres</div></div></div>
-      <div class="food-row"><span class="food-emoji">🪨</span><div><div><strong>Zinek 20–50 mg/den</strong></div><div class="food-desc">Androgeny, kůže, vlasy, imunita</div></div></div>
-    </div>
-  </div>
-</div>
-
-
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <button class="nav-btn active" data-tab="dnes">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14" stroke-width="3"/><line x1="12" y1="14" x2="12" y2="14" stroke-width="3"/><line x1="16" y1="14" x2="16" y2="14" stroke-width="3"/></svg>
+<!-- ══════ NAV ══════ -->
+<nav class="nav">
+<div class="nav-in">
+  <button class="ntab act" data-tab="dnes">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     Dnes
   </button>
-  <button class="nav-btn" data-tab="jidlo">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
-    Jídlo
+  <button class="ntab" data-tab="jidlo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
+    Jídelní plán
   </button>
-  <button class="nav-btn" data-tab="prehled">
+  <button class="ntab" data-tab="prehled">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
     Přehled
   </button>
-  <button class="nav-btn" data-tab="potraviny">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/><path d="M12 8v4l3 3"/><path d="M2 2l4 4"/></svg>
+  <button class="ntab" data-tab="cesta">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Moje cesta
+  </button>
+  <button class="ntab" data-tab="potraviny">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/><path d="M8 12h8M12 8v8"/></svg>
     Potraviny
   </button>
+</div>
 </nav>
+
+<div class="toast" id="toast">Uloženo ✓</div>
+
+<!-- ══════════════════════════════════════════ -->
+<main class="wrap">
+
+<!-- ═══ PANE: DNES ═══ -->
+<div class="pane act" id="pane-dnes">
+<div class="g2">
+
+  <!-- LEFT COLUMN -->
+  <div class="col">
+
+    <!-- Nálada + progress -->
+    <div class="card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0">
+        <div>
+          <div class="ct">Jak se dnes cítíš?</div>
+          <div style="font-size:13px;color:var(--text-m);margin-top:-8px">Energie & nálada dne</div>
+        </div>
+        <div class="ring" id="progressRing">
+          <svg width="58" height="58" viewBox="0 0 58 58">
+            <circle class="ring-tr" cx="29" cy="29" r="24"/>
+            <circle class="ring-fl" id="ringFill" cx="29" cy="29" r="24"/>
+          </svg>
+          <div class="ring-tx" id="ringTxt">0%</div>
+        </div>
+      </div>
+      <div class="mood-row" id="moodRow">
+        <button class="mb" data-v="1"><span class="em">😴</span><span class="lb">Bez energie</span></button>
+        <button class="mb" data-v="2"><span class="em">😔</span><span class="lb">Hůře</span></button>
+        <button class="mb" data-v="3"><span class="em">😐</span><span class="lb">Nic moc</span></button>
+        <button class="mb" data-v="4"><span class="em">🙂</span><span class="lb">Dobře</span></button>
+        <button class="mb" data-v="5"><span class="em">✨</span><span class="lb">Skvěle!</span></button>
+      </div>
+    </div>
+
+    <!-- Morning habits -->
+    <div class="hb morn">
+      <div class="hb-hd"><span>🌅 Ranní rutina</span><span class="hb-ct" id="cnt-m">0/4</span></div>
+      <div class="hb-bd">
+        <div class="hi" data-b="morn" data-i="0"><div class="hb-num">1</div><span class="hl">Sklenka vody před kávou – hydratace jako první</span></div>
+        <div class="hi" data-b="morn" data-i="1"><div class="hb-num">2</div><span class="hl">Protein do 60 minut od vstávání (20–30 g)</span></div>
+        <div class="hi" data-b="morn" data-i="2"><div class="hb-num">3</div><span class="hl">Pohyb 10–15 minut – chůze, strečink, lehký pilates</span></div>
+        <div class="hi" data-b="morn" data-i="3"><div class="hb-num">4</div><span class="hl">5–10 minut venku – ranní světlo pro kortizol & cykl.</span></div>
+      </div>
+    </div>
+
+    <!-- Afternoon habits -->
+    <div class="hb aftn">
+      <div class="hb-hd"><span>☀️ Odpoledne</span><span class="hb-ct" id="cnt-a">0/3</span></div>
+      <div class="hb-bd">
+        <div class="hi" data-b="aftn" data-i="0"><div class="hb-num">1</div><span class="hl">Vybalancovaný oběd – bílkoviny + vláknina + zdravé tuky</span></div>
+        <div class="hi" data-b="aftn" data-i="1"><div class="hb-num">2</div><span class="hl">Procházka po jídle 10–15 min (postprandiální glykémie)</span></div>
+        <div class="hi" data-b="aftn" data-i="2"><div class="hb-num">3</div><span class="hl">1,5 l vody splněno do odpoledne</span></div>
+      </div>
+    </div>
+
+    <!-- Evening habits -->
+    <div class="hb evng">
+      <div class="hb-hd"><span>🌙 Večer</span><span class="hb-ct" id="cnt-e">0/3</span></div>
+      <div class="hb-bd">
+        <div class="hi" data-b="evng" data-i="0"><div class="hb-num">1</div><span class="hl">Zdravá svačina – bez cukru a ultra-zpracovaných jídel</span></div>
+        <div class="hi" data-b="evng" data-i="1"><div class="hb-num">2</div><span class="hl">Relaxace – dech, meditace, čtení, klidná aktivita</span></div>
+        <div class="hi" data-b="evng" data-i="2"><div class="hb-num">3</div><span class="hl">Bedtime goal: ulehnout do [čas] pro kvalitní spánek</span></div>
+      </div>
+    </div>
+
+    <!-- Malé vítězství -->
+    <div class="card">
+      <div class="ct" style="font-size:16px">⭐ Malé vítězství dne</div>
+      <div style="font-size:12.5px;color:var(--text-m);margin-top:-8px;margin-bottom:2px">Co ti dnes šlo dobře? Zapiš si to.</div>
+      <input type="text" class="win-in" id="winInput" placeholder="Dnes jsem se cítila dobře po...">
+    </div>
+
+  </div><!-- /left -->
+
+  <!-- RIGHT COLUMN -->
+  <div class="col">
+
+    <!-- Tělesné symptomy -->
+    <div class="card">
+      <div class="ct">Jak se tělo cítilo?</div>
+
+      <div class="cl">💤 Spánek</div>
+      <div class="srow">
+        <button class="sbtn" data-s="sleep" data-v="1">Špatně</button>
+        <button class="sbtn" data-s="sleep" data-v="2">Ušlo</button>
+        <button class="sbtn" data-s="sleep" data-v="3">Dobře</button>
+        <button class="sbtn" data-s="sleep" data-v="4">Skvěle</button>
+      </div>
+
+      <div class="cl">💪 Energie celkově</div>
+      <div class="srow">
+        <button class="sbtn" data-s="energy" data-v="1">Vyčerpaná</button>
+        <button class="sbtn" data-s="energy" data-v="2">Unavená</button>
+        <button class="sbtn" data-s="energy" data-v="3">V pohodě</button>
+        <button class="sbtn" data-s="energy" data-v="4">Plná sil</button>
+      </div>
+
+      <div class="div"></div>
+
+      <div class="cl">🫃 Nafouklnutí</div>
+      <div class="srow">
+        <button class="sbtn" data-s="bloat" data-v="1">Vůbec</button>
+        <button class="sbtn" data-s="bloat" data-v="2">Trochu</button>
+        <button class="sbtn" data-s="bloat" data-v="3">Středně</button>
+        <button class="sbtn" data-s="bloat" data-v="4">Hodně</button>
+      </div>
+
+      <div class="cl">🧠 Mozková mlha</div>
+      <div class="srow">
+        <button class="sbtn" data-s="fog" data-v="1">Vůbec</button>
+        <button class="sbtn" data-s="fog" data-v="2">Trochu</button>
+        <button class="sbtn" data-s="fog" data-v="3">Středně</button>
+        <button class="sbtn" data-s="fog" data-v="4">Hodně</button>
+      </div>
+
+      <div class="cl">😤 Kůže / akné</div>
+      <div class="srow">
+        <button class="sbtn" data-s="skin" data-v="1">OK</button>
+        <button class="sbtn" data-s="skin" data-v="2">Trochu</button>
+        <button class="sbtn" data-s="skin" data-v="3">Středně</button>
+        <button class="sbtn" data-s="skin" data-v="4">Hodně</button>
+      </div>
+
+      <div class="cl">🩸 Bolest břicha / menstrukace</div>
+      <div class="painrow">
+        <button class="pbtn no-pain" data-p="0">✓ Žádná</button>
+        <button class="pbtn" data-p="1">Mírná 🌿</button>
+        <button class="pbtn" data-p="2">Středně 🔶</button>
+        <button class="pbtn" data-p="3">Silná 🔴</button>
+      </div>
+    </div>
+
+    <!-- Pohyb -->
+    <div class="card">
+      <div class="ct">🏃‍♀️ Pohyb dnes</div>
+      <div class="exrow" id="exGrid">
+        <button class="exbtn" data-x="none"><span class="xi">🛋️</span>Žádný</button>
+        <button class="exbtn" data-x="walk"><span class="xi">🚶‍♀️</span>Chůze</button>
+        <button class="exbtn" data-x="yoga"><span class="xi">🧘‍♀️</span>Yoga / pilates</button>
+        <button class="exbtn" data-x="strength"><span class="xi">💪</span>Silový trénink</button>
+        <button class="exbtn" data-x="cardio"><span class="xi">🏊‍♀️</span>Kardio</button>
+        <button class="exbtn" data-x="cycling"><span class="xi">🚴‍♀️</span>Kolo</button>
+        <button class="exbtn" data-x="dance"><span class="xi">💃</span>Tanec</button>
+        <button class="exbtn" data-x="other"><span class="xi">⚡</span>Jiné</button>
+      </div>
+    </div>
+
+    <!-- Spouštěče zánětu -->
+    <div class="card">
+      <div class="ct">🔥 Spouštěče zánětu dnes</div>
+      <div class="chips" id="triggerGrid">
+        <div class="chip" data-t="sugar">🍬 Cukr</div>
+        <div class="chip" data-t="dairy">🥛 Mléčné</div>
+        <div class="chip" data-t="carbs">🍞 Bílé sacharidy</div>
+        <div class="chip" data-t="sleep">😴 Špatný spánek</div>
+        <div class="chip" data-t="stress">😰 Stres</div>
+        <div class="chip" data-t="skipped">⏰ Vynechané jídlo</div>
+        <div class="chip" data-t="alcohol">🍷 Alkohol</div>
+        <div class="chip" data-t="processed">🍕 Ultra-zprac. jídla</div>
+        <div class="chip" data-t="coffee">☕ Hodně kofeinu</div>
+        <div class="chip" data-t="nooutside">🌲 Nebyly venku</div>
+      </div>
+    </div>
+
+    <!-- Poznámky -->
+    <div class="card">
+      <div class="ct">📝 Poznámky ke dni</div>
+      <div style="font-size:12.5px;color:var(--text-m);margin-top:-8px">Co ses naučila? Co fungovalo? Jak ses cítila?</div>
+      <textarea class="notes-ta" id="notesInput" placeholder="Dnes mě překvapilo, že..."></textarea>
+    </div>
+
+  </div><!-- /right -->
+</div><!-- /g2 -->
+</div><!-- /pane-dnes -->
+
+
+<!-- ═══ PANE: JÍDLO ═══ -->
+<div class="pane" id="pane-jidlo">
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;margin-bottom:18px">Týdenní jídelní plán</h2>
+
+  <!-- Desktop grid -->
+  <div class="meal-hdr-row">
+    <div class="mhc">Jídlo</div>
+    <div class="mhc">Pondělí</div>
+    <div class="mhc">Úterý</div>
+    <div class="mhc">Středa</div>
+    <div class="mhc">Čtvrtek</div>
+    <div class="mhc">Pátek</div>
+    <div class="mhc">Sobota</div>
+    <div class="mhc">Neděle</div>
+  </div>
+  <div class="meal-body">
+    <div class="meal-row">
+      <div class="mtype">🌅 Snídaně</div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="po" data-m="s" placeholder="snídaně..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ut" data-m="s" placeholder="snídaně..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="st" data-m="s" placeholder="snídaně..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ct" data-m="s" placeholder="snídaně..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="pa" data-m="s" placeholder="snídaně..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="so" data-m="s" placeholder="snídaně..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ne" data-m="s" placeholder="snídaně..."></textarea></div>
+    </div>
+    <div class="meal-row">
+      <div class="mtype">☀️ Oběd</div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="po" data-m="o" placeholder="oběd..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ut" data-m="o" placeholder="oběd..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="st" data-m="o" placeholder="oběd..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ct" data-m="o" placeholder="oběd..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="pa" data-m="o" placeholder="oběd..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="so" data-m="o" placeholder="oběd..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ne" data-m="o" placeholder="oběd..."></textarea></div>
+    </div>
+    <div class="meal-row">
+      <div class="mtype">🌙 Večeře</div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="po" data-m="v" placeholder="večeře..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ut" data-m="v" placeholder="večeře..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="st" data-m="v" placeholder="večeře..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ct" data-m="v" placeholder="večeře..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="pa" data-m="v" placeholder="večeře..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="so" data-m="v" placeholder="večeře..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ne" data-m="v" placeholder="večeře..."></textarea></div>
+    </div>
+    <div class="meal-row">
+      <div class="mtype">🍎 Svačina</div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="po" data-m="sv" placeholder="svačina..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ut" data-m="sv" placeholder="svačina..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="st" data-m="sv" placeholder="svačina..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ct" data-m="sv" placeholder="svačina..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="pa" data-m="sv" placeholder="svačina..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="so" data-m="sv" placeholder="svačina..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ne" data-m="sv" placeholder="svačina..."></textarea></div>
+    </div>
+    <div class="meal-row">
+      <div class="mtype">💊 Doplňky</div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="po" data-m="d" placeholder="doplňky..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ut" data-m="d" placeholder="doplňky..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="st" data-m="d" placeholder="doplňky..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ct" data-m="d" placeholder="doplňky..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="pa" data-m="d" placeholder="doplňky..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="so" data-m="d" placeholder="doplňky..."></textarea></div>
+      <div class="meal-cell"><textarea class="meal-ta" data-d="ne" data-m="d" placeholder="doplňky..."></textarea></div>
+    </div>
+  </div>
+
+  <!-- Mobile fallback -->
+  <div class="meal-mob card">
+    <div class="day-pills" id="dayPills">
+      <button class="dpill act" data-d="po">Pondělí</button>
+      <button class="dpill" data-d="ut">Úterý</button>
+      <button class="dpill" data-d="st">Středa</button>
+      <button class="dpill" data-d="ct">Čtvrtek</button>
+      <button class="dpill" data-d="pa">Pátek</button>
+      <button class="dpill" data-d="so">Sobota</button>
+      <button class="dpill" data-d="ne">Neděle</button>
+    </div>
+    <div id="mobMealSlots">
+      <div class="mslot"><div class="mslot-lbl">🌅 Snídaně</div><textarea class="mslot-ta" data-m="s" rows="2" placeholder="Co budeš jíst k snídani?"></textarea></div>
+      <div class="mslot"><div class="mslot-lbl">☀️ Oběd</div><textarea class="mslot-ta" data-m="o" rows="2" placeholder="Co budeš jíst k obědu?"></textarea></div>
+      <div class="mslot"><div class="mslot-lbl">🌙 Večeře</div><textarea class="mslot-ta" data-m="v" rows="2" placeholder="Co budeš jíst k večeři?"></textarea></div>
+      <div class="mslot"><div class="mslot-lbl">🍎 Svačina</div><textarea class="mslot-ta" data-m="sv" rows="1" placeholder="Zdravá svačinka?"></textarea></div>
+      <div class="mslot"><div class="mslot-lbl">💊 Doplňky</div><textarea class="mslot-ta" data-m="d" rows="1" placeholder="Myo-inositol, vitamín D..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ PANE: PŘEHLED ═══ -->
+<div class="pane" id="pane-prehled">
+
+  <div class="ov-banner">
+    <div class="ov-grid">
+      <div class="ov-stat"><div class="ov-val" id="ovPct">—</div><div class="ov-lbl">Průměr návyků</div></div>
+      <div class="ov-stat"><div class="ov-val" id="ovDays">0</div><div class="ov-lbl">Dní s daty</div></div>
+      <div class="ov-stat"><div class="ov-val" id="ovStreak">0</div><div class="ov-lbl">Streak (po sobě)</div></div>
+      <div class="ov-stat"><div class="ov-val" id="ovWins">0</div><div class="ov-lbl">Malá vítězství</div></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="col">
+      <div class="card">
+        <div class="ct">Aktivita v týdnu</div>
+        <div class="wbar" id="weekBar"></div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Nejčastější spouštěče</div>
+        <div class="chips" id="trigSummary" style="margin-top:6px"></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="ct">Tělesné míry</div>
+        <div style="font-size:12.5px;color:var(--text-m);margin-top:-8px">Volitelné – jednou týdně</div>
+        <div class="mgrid">
+          <div><div class="mlbl">⚖️ Váha (kg)</div><input class="min" type="number" step=".1" id="wtInput" placeholder="—"></div>
+          <div><div class="mlbl">📏 Pas (cm)</div><input class="min" type="number" step=".5" id="wsInput" placeholder="—"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Nálada & energie – průměr</div>
+        <div style="display:flex;gap:24px;margin-top:10px">
+          <div style="text-align:center;flex:1">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--accent)" id="avgMood">—</div>
+            <div style="font-size:11px;color:var(--text-m);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Nálada</div>
+          </div>
+          <div style="text-align:center;flex:1">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--primary-d)" id="avgEnergy">—</div>
+            <div style="font-size:11px;color:var(--text-m);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Energie</div>
+          </div>
+          <div style="text-align:center;flex:1">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--lav)" id="avgSleep">—</div>
+            <div style="font-size:11px;color:var(--text-m);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Spánek</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ PANE: CESTA ═══ -->
+<div class="pane" id="pane-cesta">
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;margin-bottom:6px">Moje PCOS cesta</h2>
+  <p style="font-size:13.5px;color:var(--text-m);margin-bottom:22px">Klikni na milník, který jsi splnila. Každý krok se počítá – i ten nejmenší. 🌱</p>
+
+  <div class="journey-grid" id="journeyGrid">
+    <div class="jstep" data-j="0"><div class="js-icon">🩺</div><div class="js-title">Hledám podporu</div><div class="js-desc">Konzultace s lékařem, gynekologem nebo endokrinologem</div></div>
+    <div class="jstep" data-j="1"><div class="js-icon">📚</div><div class="js-title">Rozumím svému tělu</div><div class="js-desc">Zjistila jsem si, jak PCOS funguje a co ovlivňuje moje hormony</div></div>
+    <div class="jstep" data-j="2"><div class="js-icon">📊</div><div class="js-title">Trackuji příznaky</div><div class="js-desc">Pravidelně si zaznamenávám cyklus, symptomy a spouštěče</div></div>
+    <div class="jstep" data-j="3"><div class="js-icon">🥗</div><div class="js-title">Měním stravování</div><div class="js-desc">Přechod na středomořský styl, nízký GI, více vlákniny</div></div>
+    <div class="jstep" data-j="4"><div class="js-icon">🏃‍♀️</div><div class="js-title">Pohyb je součástí dne</div><div class="js-desc">Pravidelný pohyb – min. 30 minut většinu dní</div></div>
+    <div class="jstep" data-j="5"><div class="js-icon">😌</div><div class="js-title">Pracuji na stresu</div><div class="js-desc">Meditace, dechová cvičení, mindfulness nebo terapie</div></div>
+    <div class="jstep" data-j="6"><div class="js-icon">💊</div><div class="js-title">Doplňky stravy</div><div class="js-desc">Myo-inositol, vitamín D, omega-3, hořčík – konzultováno s lékařem</div></div>
+    <div class="jstep" data-j="7"><div class="js-icon">🛏️</div><div class="js-title">Spánek jako priorita</div><div class="js-desc">7–9 hodin, pravidelný režim, večerní rutina</div></div>
+    <div class="jstep" data-j="8"><div class="js-icon">🌿</div><div class="js-title">Gut health</div><div class="js-desc">Kefír, fermentované potraviny, probiotika, vláknina 25–40g/den</div></div>
+    <div class="jstep" data-j="9"><div class="js-icon">💛</div><div class="js-title">Komunita & podpora</div><div class="js-desc">Propojila jsem se s jinými ženami s PCOS, nejsem v tom sama</div></div>
+    <div class="jstep" data-j="10"><div class="js-icon">🎯</div><div class="js-title">Konzistentní rutina</div><div class="js-desc">Mám zavedené návyky, které funguji aspoň 30 dní po sobě</div></div>
+    <div class="jstep" data-j="11"><div class="js-icon">✨</div><div class="js-title">Cítím zlepšení</div><div class="js-desc">Méně příznaků, víc energie, větší pohoda – mám to pod kontrolou</div></div>
+  </div>
+</div>
+
+
+<!-- ═══ PANE: POTRAVINY ═══ -->
+<div class="pane" id="pane-potraviny">
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;margin-bottom:6px">Průvodce potravinami</h2>
+  <p style="font-size:13.5px;color:var(--text-m);margin-bottom:22px">Rychlý referenční přehled – co podporuje hormonální rovnováhu a co zánět zhoršuje.</p>
+
+  <div class="food-cols">
+    <div class="col">
+      <div class="fg best">
+        <div class="fg-hd">✅ Nejlepší potraviny pro PCOS</div>
+        <div class="flist">
+          <div class="frow"><span class="fem">🥬</span><div><div>Listová zelenina</div><div class="fdesc">špenát, kapusta, rukola – hořčík, železo, folát</div></div></div>
+          <div class="frow"><span class="fem">🫐</span><div><div>Bobulové ovoce</div><div class="fdesc">borůvky, maliny, jahody – nízké GI, antioxidanty</div></div></div>
+          <div class="frow"><span class="fem">🐟</span><div><div>Tučné ryby</div><div class="fdesc">makrela, sardinky, losos – EPA+DHA omega-3</div></div></div>
+          <div class="frow"><span class="fem">🥑</span><div><div>Avokádo</div><div class="fdesc">zdravé tuky, vláknina, draslík</div></div></div>
+          <div class="frow"><span class="fem">🫘</span><div><div>Luštěniny</div><div class="fdesc">čočka, cizrna, fazole – GI ~30, vláknina + bílkoviny</div></div></div>
+          <div class="frow"><span class="fem">🌾</span><div><div>Pohanka</div><div class="fdesc">přirozený zdroj D-chiro-inositolu</div></div></div>
+          <div class="frow"><span class="fem">🌱</span><div><div>Lněné semínko</div><div class="fdesc">lignany – snižují testosteron až o 70 %</div></div></div>
+          <div class="frow"><span class="fem">🥦</span><div><div>Brukvovitá zelenina</div><div class="fdesc">brokolice, karfiol – I3C/DIM pro detox estrogenů</div></div></div>
+          <div class="frow"><span class="fem">🌿</span><div><div>Mátový čaj (pouze spearmint)</div><div class="fdesc">Mentha spicata – antiandrogenní efekt (2 šálky/den)</div></div></div>
+          <div class="frow"><span class="fem">🥛</span><div><div>Kefír & bílý jogurt</div><div class="fdesc">probiotika, estrobolom, střevní mikrobiom</div></div></div>
+          <div class="frow"><span class="fem">🫚</span><div><div>Olivový olej (extra panenský)</div><div class="fdesc">protizánětlivé mono-nenasycené tuky</div></div></div>
+          <div class="frow"><span class="fem">🌰</span><div><div>Ořechy a semínka</div><div class="fdesc">vlašské ořechy, mandle, chia, dýňová semínka</div></div></div>
+          <div class="frow"><span class="fem">🍵</span><div><div>Skořice</div><div class="fdesc">inzulinová senzitivita, stabilizace glykémie</div></div></div>
+          <div class="frow"><span class="fem">🟡</span><div><div>Kurkuma + pepř</div><div class="fdesc">silně protizánětlivé – piperin zvyšuje vstřebávání</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="fg worst">
+        <div class="fg-hd">❌ Čemu se raději vyhnout</div>
+        <div class="flist">
+          <div class="frow"><span class="fem">🍬</span><div><div>Cukr a sladkosti</div><div class="fdesc">prudce zvyšuje inzulin → spouští androgens</div></div></div>
+          <div class="frow"><span class="fem">🥤</span><div><div>Slazené nápoje a džusy</div><div class="fdesc">fruktóza zatěžuje játra, GI nekontrolovaný</div></div></div>
+          <div class="frow"><span class="fem">🍞</span><div><div>Bílé pečivo a bílá rýže</div><div class="fdesc">vysoké GI, minimum vlákniny</div></div></div>
+          <div class="frow"><span class="fem">🍕</span><div><div>Ultra-zpracovaná jídla</div><div class="fdesc">trans-tuky, aditiva, silně zánětlivé</div></div></div>
+          <div class="frow"><span class="fem">🍺</span><div><div>Alkohol</div><div class="fdesc">narušuje detox estrogenů v játrech</div></div></div>
+          <div class="frow"><span class="fem">🥣</span><div><div>Slazené cereálie</div><div class="fdesc">skrytý cukr, vysoké GI, málo vlákniny</div></div></div>
+          <div class="frow"><span class="fem">🧈</span><div><div>Trans-tuky (margarín, smažená jídla)</div><div class="fdesc">systémový zánět, inzulinová rezistence</div></div></div>
+          <div class="frow"><span class="fem">🥛</span><div><div>Velké množství kravského mléka</div><div class="fdesc">individuální – u části žen zvyšuje androgeny</div></div></div>
+        </div>
+      </div>
+
+      <div class="fg supps" style="margin-top:16px">
+        <div class="fg-hd">💊 Doplňky s největší evidencí</div>
+        <div class="flist">
+          <div class="frow"><span class="fem">🔬</span><div><div><strong>Myo-inositol 4g + D-chiro-inositol 100mg</strong></div><div class="fdesc">Nejsilnější evidence – poměr 40:1, inzulinová rezistence, SHBG</div></div></div>
+          <div class="frow"><span class="fem">☀️</span><div><div><strong>Vitamín D 1 000–4 000 IU/den</strong></div><div class="fdesc">Deficit u 67–86 % žen s PCOS</div></div></div>
+          <div class="frow"><span class="fem">🐟</span><div><div><strong>Omega-3 1–3g EPA+DHA/den</strong></div><div class="fdesc">Snižuje testosteron a CRP (zánět)</div></div></div>
+          <div class="frow"><span class="fem">⚡</span><div><div><strong>Hořčík 250–400 mg/den</strong></div><div class="fdesc">Inzulinová senzitivita, spánek, zvládání stresu</div></div></div>
+          <div class="frow"><span class="fem">🪨</span><div><div><strong>Zinek 20–50 mg/den</strong></div><div class="fdesc">Androgeny, kůže, vlasy, imunita</div></div></div>
+          <div class="frow"><span class="fem">🌿</span><div><div><strong>NAC 1 200–1 800 mg/den</strong></div><div class="fdesc">Alternativa metforminu – inzulinová rezistence, ovulace</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main><!-- /wrap -->
 
 <script>
 // ═══════════════════════════════════════════════
-// UTILS
+// CONSTANTS
 // ═══════════════════════════════════════════════
-const TOTAL_HABITS = 10; // 4 morning + 3 afternoon + 3 evening
+const TOTAL = 10; // 4+3+3
+const CIRC  = 2 * Math.PI * 24;
 
-function todayKey() {
-  return new Date().toISOString().split('T')[0];
+function todayKey(){ return new Date().toISOString().split('T')[0]; }
+function weekKey(){
+  const d=new Date(), dw=d.getDay()||7, m=new Date(d);
+  m.setDate(d.getDate()-dw+1);
+  return m.toISOString().split('T')[0];
 }
 
-function weekKey() {
-  const d = new Date();
-  const day = d.getDay() || 7;
-  const mon = new Date(d);
-  mon.setDate(d.getDate() - day + 1);
-  return mon.toISOString().split('T')[0];
-}
+const TODAY=todayKey(), WEEK=weekKey();
 
-function getStore(key) {
-  try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; }
-}
-function setStore(key, val) {
-  localStorage.setItem(key, JSON.stringify(val));
-}
+function gs(k){ try{ return JSON.parse(localStorage.getItem(k))||{}; }catch{ return {}; } }
+function ss(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
 
-let toastTimer;
-function showToast() {
-  clearTimeout(toastTimer);
-  const el = document.getElementById('toast');
+let _toastT;
+function toast(){
+  clearTimeout(_toastT);
+  const el=document.getElementById('toast');
   el.classList.add('show');
-  toastTimer = setTimeout(() => el.classList.remove('show'), 1400);
-}
-
-const TODAY = todayKey();
-const WEEK  = weekKey();
-
-// ═══════════════════════════════════════════════
-// PROGRESS RING
-// ═══════════════════════════════════════════════
-const CIRC = 2 * Math.PI * 23;
-function setRing(checked, total) {
-  const pct = total > 0 ? Math.round(checked / total * 100) : 0;
-  const fill = document.getElementById('ringFill');
-  fill.style.strokeDasharray = CIRC;
-  fill.style.strokeDashoffset = CIRC - (pct / 100) * CIRC;
-  document.getElementById('ringText').textContent = pct + '%';
+  _toastT=setTimeout(()=>el.classList.remove('show'),1400);
 }
 
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-let dayData  = getStore('pcos_day_' + TODAY);
-let mealData = getStore('pcos_meals_' + WEEK);
-let weekData = getStore('pcos_week_' + WEEK);
-let activeMealDay = 'po';
+let dd=gs('pcos_day_'+TODAY);
+let ml=gs('pcos_meals_'+WEEK);
+let wd=gs('pcos_week_'+WEEK);
+let jd=gs('pcos_journey');
 
-function saveDayData() { setStore('pcos_day_' + TODAY, dayData); showToast(); }
-function saveMealData() { setStore('pcos_meals_' + WEEK, mealData); showToast(); }
-function saveWeekData() { setStore('pcos_week_' + WEEK, weekData); showToast(); }
+function saveDd(){ ss('pcos_day_'+TODAY,dd); toast(); }
+function saveMl(){ ss('pcos_meals_'+WEEK,ml); toast(); }
+function saveWd(){ ss('pcos_week_'+WEEK,wd); toast(); }
+function saveJd(){ ss('pcos_journey',jd); toast(); }
 
 // ═══════════════════════════════════════════════
-// HEADER
+// HEADER DATE
 // ═══════════════════════════════════════════════
-(function initHeader() {
-  const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
-  document.getElementById('headerDate').textContent =
-    new Date().toLocaleDateString('cs-CZ', opts);
+document.getElementById('dateBadge').textContent =
+  new Date().toLocaleDateString('cs-CZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
-  const ci = document.getElementById('cycleDayInput');
-  if (dayData.cycleDay) ci.value = dayData.cycleDay;
-  ci.addEventListener('change', () => {
-    dayData.cycleDay = ci.value;
-    saveDayData();
-  });
-})();
+// ═══════════════════════════════════════════════
+// PROGRESS RING
+// ═══════════════════════════════════════════════
+function setRing(n,t){
+  const p=t>0?Math.round(n/t*100):0;
+  const f=document.getElementById('ringFill');
+  f.style.strokeDasharray=CIRC;
+  f.style.strokeDashoffset=CIRC-(p/100)*CIRC;
+  document.getElementById('ringTxt').textContent=p+'%';
+}
 
 // ═══════════════════════════════════════════════
 // HABITS
 // ═══════════════════════════════════════════════
-function countChecked() {
-  return document.querySelectorAll('.habit-item.done').length;
+const cnts={morn:4,aftn:3,evng:3};
+const cntId={morn:'cnt-m',aftn:'cnt-a',evng:'cnt-e'};
+function recount(){
+  ['morn','aftn','evng'].forEach(b=>{
+    const total=cnts[b];
+    const done=document.querySelectorAll(`.hi.done[data-b="${b}"]`).length;
+    document.getElementById(cntId[b]).textContent=done+'/'+total;
+  });
+  const allDone=document.querySelectorAll('.hi.done').length;
+  setRing(allDone,TOTAL);
 }
 
-function updateRing() {
-  setRing(countChecked(), TOTAL_HABITS);
-}
-
-(function initHabits() {
-  if (!dayData.habits) dayData.habits = {};
-
-  document.querySelectorAll('.habit-item').forEach(item => {
-    const key = item.dataset.b + '_' + item.dataset.i;
-    if (dayData.habits[key]) item.classList.add('done');
-
-    item.addEventListener('click', () => {
-      item.classList.toggle('done');
-      dayData.habits[key] = item.classList.contains('done');
-      saveDayData();
-      updateRing();
+(function initHabits(){
+  if(!dd.habits) dd.habits={};
+  document.querySelectorAll('.hi').forEach(el=>{
+    const k=el.dataset.b+'_'+el.dataset.i;
+    if(dd.habits[k]) el.classList.add('done');
+    el.addEventListener('click',()=>{
+      el.classList.toggle('done');
+      dd.habits[k]=el.classList.contains('done');
+      saveDd(); recount();
     });
   });
-
-  updateRing();
+  recount();
 })();
 
 // ═══════════════════════════════════════════════
 // MOOD
 // ═══════════════════════════════════════════════
-(function initMood() {
-  if (!dayData.mood) dayData.mood = null;
-  document.querySelectorAll('.mood-btn').forEach(btn => {
-    if (String(dayData.mood) === btn.dataset.v) btn.classList.add('selected');
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      dayData.mood = btn.dataset.v;
-      saveDayData();
+(function initMood(){
+  if(!dd.mood) dd.mood=null;
+  document.querySelectorAll('.mb').forEach(b=>{
+    if(String(dd.mood)===b.dataset.v) b.classList.add('sel');
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.mb').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      dd.mood=b.dataset.v;
+      saveDd();
     });
   });
 })();
 
 // ═══════════════════════════════════════════════
-// SYMPTOM SCALES
+// SCALES
 // ═══════════════════════════════════════════════
-(function initScales() {
-  if (!dayData.symptoms) dayData.symptoms = {};
-  document.querySelectorAll('.scale-btn').forEach(btn => {
-    const s = btn.dataset.s, v = btn.dataset.v;
-    if (String(dayData.symptoms[s]) === v) btn.classList.add('sel');
-    btn.addEventListener('click', () => {
-      document.querySelectorAll(`.scale-btn[data-s="${s}"]`).forEach(b => b.classList.remove('sel'));
-      btn.classList.add('sel');
-      dayData.symptoms[s] = v;
-      saveDayData();
+(function initScales(){
+  if(!dd.sym) dd.sym={};
+  document.querySelectorAll('.sbtn').forEach(b=>{
+    const s=b.dataset.s, v=b.dataset.v;
+    if(String(dd.sym[s])===v) b.classList.add('sel');
+    b.addEventListener('click',()=>{
+      document.querySelectorAll(`.sbtn[data-s="${s}"]`).forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      dd.sym[s]=v;
+      saveDd();
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// PAIN
+// ═══════════════════════════════════════════════
+(function initPain(){
+  if(!dd.pain) dd.pain=null;
+  document.querySelectorAll('.pbtn').forEach(b=>{
+    if(String(dd.pain)===b.dataset.p) b.classList.add('sel');
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.pbtn').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      dd.pain=b.dataset.p;
+      saveDd();
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// EXERCISE
+// ═══════════════════════════════════════════════
+(function initEx(){
+  if(!dd.ex) dd.ex=[];
+  document.querySelectorAll('.exbtn').forEach(b=>{
+    if(dd.ex.includes(b.dataset.x)) b.classList.add('sel');
+    b.addEventListener('click',()=>{
+      b.classList.toggle('sel');
+      const x=b.dataset.x;
+      if(!dd.ex) dd.ex=[];
+      if(b.classList.contains('sel')) dd.ex.push(x);
+      else dd.ex=dd.ex.filter(e=>e!==x);
+      saveDd();
     });
   });
 })();
@@ -1101,173 +894,178 @@ function updateRing() {
 // ═══════════════════════════════════════════════
 // TRIGGERS
 // ═══════════════════════════════════════════════
-(function initTriggers() {
-  if (!dayData.triggers) dayData.triggers = {};
-  document.querySelectorAll('#triggerGrid .chip').forEach(chip => {
-    const t = chip.dataset.t;
-    if (dayData.triggers[t]) chip.classList.add('on');
-    chip.addEventListener('click', () => {
-      chip.classList.toggle('on');
-      dayData.triggers[t] = chip.classList.contains('on');
-      saveDayData();
+(function initTriggers(){
+  if(!dd.trig) dd.trig={};
+  document.querySelectorAll('#triggerGrid .chip').forEach(c=>{
+    if(dd.trig[c.dataset.t]) c.classList.add('on');
+    c.addEventListener('click',()=>{
+      c.classList.toggle('on');
+      dd.trig[c.dataset.t]=c.classList.contains('on');
+      saveDd();
     });
   });
 })();
 
 // ═══════════════════════════════════════════════
-// NOTES
+// WIN & NOTES
 // ═══════════════════════════════════════════════
-(function initNotes() {
-  const ta = document.getElementById('notesInput');
-  if (dayData.notes) ta.value = dayData.notes;
-  let noteTimer;
-  ta.addEventListener('input', () => {
-    clearTimeout(noteTimer);
-    noteTimer = setTimeout(() => {
-      dayData.notes = ta.value;
-      saveDayData();
-    }, 700);
-  });
+(function initWinNotes(){
+  const wi=document.getElementById('winInput');
+  const ni=document.getElementById('notesInput');
+  if(dd.win) wi.value=dd.win;
+  if(dd.notes) ni.value=dd.notes;
+  let wt,nt;
+  wi.addEventListener('input',()=>{ clearTimeout(wt); wt=setTimeout(()=>{ dd.win=wi.value; saveDd(); },600); });
+  ni.addEventListener('input',()=>{ clearTimeout(nt); nt=setTimeout(()=>{ dd.notes=ni.value; saveDd(); },600); });
 })();
 
 // ═══════════════════════════════════════════════
 // MEAL PLAN
 // ═══════════════════════════════════════════════
-function loadMealDay(day) {
-  const d = mealData[day] || {};
-  document.querySelectorAll('.meal-ta').forEach(ta => {
-    ta.value = d[ta.dataset.m] || '';
-    ta.oninput = () => {
-      if (!mealData[day]) mealData[day] = {};
-      mealData[day][ta.dataset.m] = ta.value;
-      saveMealData();
+// Desktop grid
+document.querySelectorAll('.meal-ta').forEach(ta=>{
+  const d=ta.dataset.d, m=ta.dataset.m;
+  if(ml[d]&&ml[d][m]) ta.value=ml[d][m];
+  let t;
+  ta.addEventListener('input',()=>{
+    clearTimeout(t);
+    t=setTimeout(()=>{
+      if(!ml[d]) ml[d]={};
+      ml[d][m]=ta.value;
+      saveMl();
+    },500);
+  });
+});
+
+// Mobile fallback
+let mobDay='po';
+const dayMap={0:'ne',1:'po',2:'ut',3:'st',4:'ct',5:'pa',6:'so'};
+(function initMobile(){
+  // Auto-select today
+  const td=dayMap[new Date().getDay()];
+  document.querySelectorAll('.dpill').forEach(b=>{
+    b.classList.toggle('act',b.dataset.d===td);
+  });
+  mobDay=td;
+  loadMobDay(td);
+
+  document.querySelectorAll('.dpill').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.dpill').forEach(x=>x.classList.remove('act'));
+      b.classList.add('act');
+      mobDay=b.dataset.d;
+      loadMobDay(mobDay);
+    });
+  });
+})();
+
+function loadMobDay(day){
+  const d=ml[day]||{};
+  document.querySelectorAll('.mslot-ta').forEach(ta=>{
+    ta.value=d[ta.dataset.m]||'';
+    ta.oninput=()=>{
+      if(!ml[day]) ml[day]={};
+      ml[day][ta.dataset.m]=ta.value;
+      saveMl();
     };
   });
 }
 
-(function initMealPlan() {
-  document.querySelectorAll('.day-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.day-pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeMealDay = btn.dataset.d;
-      loadMealDay(activeMealDay);
-    });
-  });
-  // Auto-select today's day
-  const dayMap = { 0:'ne',1:'po',2:'ut',3:'st',4:'ct',5:'pa',6:'so' };
-  const todayDay = dayMap[new Date().getDay()];
-  document.querySelectorAll('.day-pill').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.d === todayDay);
-  });
-  activeMealDay = todayDay;
-  loadMealDay(todayDay);
-})();
-
 // ═══════════════════════════════════════════════
 // OVERVIEW
 // ═══════════════════════════════════════════════
-function buildOverview() {
-  const dayLabels = ['Po','Út','St','Čt','Pá','So','Ne'];
-  const today = new Date();
-  const dayOfWeek = today.getDay() || 7;
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - dayOfWeek + 1);
+function buildOverview(){
+  const labels=['Po','Út','St','Čt','Pá','So','Ne'];
+  const today=new Date(), dw=today.getDay()||7;
+  const mon=new Date(today); mon.setDate(today.getDate()-dw+1);
 
-  // Week bar
-  const bar = document.getElementById('weekBar');
-  bar.innerHTML = '';
-  let daysTracked = 0, totalPct = 0, pctCount = 0;
-  const triggerCounts = {};
+  const bar=document.getElementById('weekBar');
+  bar.innerHTML='';
 
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    const key = d.toISOString().split('T')[0];
-    const data = getStore('pcos_day_' + key);
-    const isToday = key === TODAY;
-    const habits = data.habits || {};
-    const habCount = Object.values(habits).filter(Boolean).length;
-    const hasAny = Object.keys(habits).length > 0;
-    if (hasAny) {
-      daysTracked++;
-      const pct = Math.round(habCount / TOTAL_HABITS * 100);
-      totalPct += pct;
-      pctCount++;
-    }
+  let days=0, totPct=0, pctN=0, streak=0, curStreak=0, wins=0;
+  const tCounts={};
+  const moodVals=[],enVals=[],slVals=[];
 
-    // Aggregate triggers
-    if (data.triggers) {
-      Object.entries(data.triggers).forEach(([k,v]) => {
-        if (v) triggerCounts[k] = (triggerCounts[k] || 0) + 1;
-      });
-    }
+  for(let i=0;i<7;i++){
+    const d2=new Date(mon); d2.setDate(mon.getDate()+i);
+    const k=d2.toISOString().split('T')[0];
+    const data=gs('pcos_day_'+k);
+    const isToday=k===TODAY;
+    const hab=data.habits||{};
+    const done=Object.values(hab).filter(Boolean).length;
+    const hasAny=Object.keys(hab).length>0;
+    if(hasAny){ days++; const p=Math.round(done/TOTAL*100); totPct+=p; pctN++; }
+    if(data.win) wins++;
+    if(hasAny){ curStreak++; streak=Math.max(streak,curStreak); } else curStreak=0;
+    if(data.trig) Object.entries(data.trig).forEach(([k2,v])=>{ if(v) tCounts[k2]=(tCounts[k2]||0)+1; });
+    if(data.mood) moodVals.push(+data.mood);
+    if(data.sym&&data.sym.energy) enVals.push(+data.sym.energy);
+    if(data.sym&&data.sym.sleep) slVals.push(+data.sym.sleep);
 
-    const cell = document.createElement('div');
-    cell.className = 'week-cell';
-    const lbl = document.createElement('div');
-    lbl.className = 'week-cell-label';
-    lbl.textContent = dayLabels[i];
-    const dot = document.createElement('div');
-    dot.className = 'week-cell-dot' + (hasAny ? ' tracked' : '') + (isToday ? ' today' : '');
-    dot.textContent = d.getDate();
-    cell.appendChild(lbl);
-    cell.appendChild(dot);
-    bar.appendChild(cell);
+    const wc=document.createElement('div'); wc.className='wc';
+    const lbl=document.createElement('div'); lbl.className='wc-lbl'; lbl.textContent=labels[i];
+    const dot=document.createElement('div');
+    const pct=hasAny?Math.round(done/TOTAL*100):0;
+    dot.className='wc-dot'+(hasAny?' tr':'')+(isToday?' td':'');
+    dot.textContent=d2.getDate();
+    const pc=document.createElement('div'); pc.className='wc-pct'; pc.textContent=hasAny?pct+'%':'';
+    wc.appendChild(lbl); wc.appendChild(dot); wc.appendChild(pc);
+    bar.appendChild(wc);
   }
 
-  // Stats
-  document.getElementById('statDays').textContent = daysTracked;
-  document.getElementById('statPct').textContent = pctCount > 0 ? Math.round(totalPct / pctCount) + '%' : '—';
+  document.getElementById('ovPct').textContent=pctN>0?Math.round(totPct/pctN)+'%':'—';
+  document.getElementById('ovDays').textContent=days;
+  document.getElementById('ovStreak').textContent=streak;
+  document.getElementById('ovWins').textContent=wins;
 
-  // Banner message
-  const msgs = ['Začni svůj týden s láskou k sobě. 🌱', 'Každý malý krok se počítá! ✨', 'Jsem na tebe hrdá. Tak dál! 💚', 'Tvoje tělo ti děkuje. 🌿'];
-  document.getElementById('weekMsg').textContent = msgs[daysTracked % msgs.length];
 
-  // Trigger summary
-  const trigLabels = {
-    sugar:'🍬 Cukr', dairy:'🥛 Mléčné', carbs:'🍞 Sacharidy',
-    sleep:'😴 Spánek', stress:'😰 Stres', skipped:'⏰ Vynechal. jídlo',
-    alcohol:'🍷 Alkohol', processed:'🍕 Zprac. jídla'
-  };
-  const ts = document.getElementById('triggerSummary');
-  ts.innerHTML = '';
-  const sorted = Object.entries(triggerCounts).sort((a,b) => b[1]-a[1]);
-  if (sorted.length === 0) {
-    ts.innerHTML = '<p class="empty-msg">Žádné spouštěče tento týden – skvělé! 🌿</p>';
-  } else {
-    sorted.slice(0,6).forEach(([k,c]) => {
-      const chip = document.createElement('div');
-      chip.className = 'chip on';
-      chip.style.cursor = 'default';
-      chip.textContent = (trigLabels[k]||k) + ' ×' + c;
-      ts.appendChild(chip);
-    });
-  }
+  document.getElementById('avgMood').textContent=moodVals.length?(moodVals.reduce((a,b)=>a+b,0)/moodVals.length).toFixed(1):'—';
+  document.getElementById('avgEnergy').textContent=enVals.length?(enVals.reduce((a,b)=>a+b,0)/enVals.length).toFixed(1):'—';
+  document.getElementById('avgSleep').textContent=slVals.length?(slVals.reduce((a,b)=>a+b,0)/slVals.length).toFixed(1):'—';
 
-  // Measurements
-  if (weekData.weight) document.getElementById('weightInput').value = weekData.weight;
-  if (weekData.waist)  document.getElementById('waistInput').value  = weekData.waist;
+  const tlab={sugar:'🍬 Cukr',dairy:'🥛 Mléčné',carbs:'🍞 Sacharidy',sleep:'😴 Spánek',stress:'😰 Stres',skipped:'⏰ Vynechal.',alcohol:'🍷 Alkohol',processed:'🍕 Zprac.',coffee:'☕ Kofein',nooutside:'🌲 Ne venku'};
+  const ts=document.getElementById('trigSummary');
+  ts.innerHTML='';
+  const sorted=Object.entries(tCounts).sort((a,b)=>b[1]-a[1]);
+  if(!sorted.length){ ts.innerHTML='<div style="font-size:13px;color:var(--text-m);padding:4px">Žádné spouštěče tento týden – super! 🌿</div>'; }
+  else sorted.slice(0,8).forEach(([k2,c])=>{
+    const ch=document.createElement('div'); ch.className='chip on'; ch.style.cursor='default';
+    ch.textContent=(tlab[k2]||k2)+' ×'+c; ts.appendChild(ch);
+  });
+
+  if(wd.wt) document.getElementById('wtInput').value=wd.wt;
+  if(wd.ws) document.getElementById('wsInput').value=wd.ws;
 }
-
-document.getElementById('weightInput').addEventListener('change', function() {
-  weekData.weight = this.value; saveWeekData();
-});
-document.getElementById('waistInput').addEventListener('change', function() {
-  weekData.waist = this.value; saveWeekData();
-});
+document.getElementById('wtInput').addEventListener('change',function(){ wd.wt=this.value; saveWd(); });
+document.getElementById('wsInput').addEventListener('change',function(){ wd.ws=this.value; saveWd(); });
 
 // ═══════════════════════════════════════════════
-// NAVIGATION
+// JOURNEY
 // ═══════════════════════════════════════════════
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const tab = btn.dataset.tab;
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    document.getElementById('pane-' + tab).classList.add('active');
-    if (tab === 'prehled') buildOverview();
+(function initJourney(){
+  if(!jd.done) jd.done=[];
+  document.querySelectorAll('.jstep').forEach(el=>{
+    const idx=+el.dataset.j;
+    if(jd.done.includes(idx)) el.classList.add('done');
+    el.addEventListener('click',()=>{
+      el.classList.toggle('done');
+      if(el.classList.contains('done')) jd.done.push(idx);
+      else jd.done=jd.done.filter(x=>x!==idx);
+      saveJd();
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.ntab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('act'));
+    btn.classList.add('act');
+    document.querySelectorAll('.pane').forEach(p=>p.classList.remove('act'));
+    document.getElementById('pane-'+btn.dataset.tab).classList.add('act');
+    if(btn.dataset.tab==='prehled') buildOverview();
   });
 });
 </script>
