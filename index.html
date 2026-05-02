@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PCOS Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F9F5EF;
+  --surface: #FFFFFF;
+  --surface-2: #F4EEE5;
+  --surface-3: #EDE4D7;
+  --primary: #7A9B7C;
+  --primary-light: #B5CCAB;
+  --primary-dark: #4E7050;
+  --primary-pale: #E8F0E5;
+  --accent: #C47B6A;
+  --accent-light: #F0DDD8;
+  --accent-dark: #9E5444;
+  --tan: #C4A882;
+  --tan-light: #F0E6D6;
+  --text: #352318;
+  --text-muted: #8A7265;
+  --text-light: #B5A090;
+  --border: #E4D9CC;
+  --morning-bg: #FEF6E4;
+  --morning-border: #F0D89A;
+  --afternoon-bg: #E8F2E8;
+  --afternoon-border: #AECBAE;
+  --evening-bg: #EBE5F5;
+  --evening-border: #C4B5E0;
+  --shadow-sm: 0 1px 6px rgba(53,35,24,0.07);
+  --shadow: 0 2px 16px rgba(53,35,24,0.09);
+  --r: 18px;
+  --r-sm: 12px;
+  --r-xs: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.app-header {
+  background: var(--surface);
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.app-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-style: italic;
+  color: var(--primary-dark);
+  line-height: 1;
+}
+
+.app-tagline {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+
+.cycle-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary-pale);
+  border: 1.5px solid var(--primary-light);
+  border-radius: 20px;
+  padding: 4px 10px 4px 8px;
+}
+
+.cycle-pill-label {
+  font-size: 11px;
+  color: var(--primary-dark);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cycle-pill input {
+  width: 32px;
+  border: none;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-align: center;
+  padding: 0;
+}
+.cycle-pill input:focus { outline: none; }
+.cycle-pill input::placeholder { color: var(--primary-light); }
+
+.header-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* ── TABS ── */
+.tab-pane {
+  display: none;
+  padding: 16px 16px 110px;
+  animation: fadeUp 0.22s ease;
+}
+.tab-pane.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+  z-index: 90;
+  box-shadow: 0 -2px 16px rgba(53,35,24,0.07);
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Nunito', sans-serif;
+  letter-spacing: 0.2px;
+  transition: color 0.2s;
+  user-select: none;
+}
+.nav-btn.active { color: var(--primary-dark); }
+.nav-btn svg { width: 22px; height: 22px; transition: transform 0.2s; }
+.nav-btn.active svg { transform: scale(1.1); }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(228,217,204,0.6);
+}
+
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.card-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+/* ── PROGRESS RING ── */
+.ring-wrap {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+}
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: var(--border); stroke-width: 4.5; }
+.ring-fill {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+}
+.ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+/* ── MOOD ── */
+.mood-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.mood-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 2px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.15s;
+  user-select: none;
+}
+.mood-btn .emoji { font-size: 20px; }
+.mood-btn .label { font-size: 9px; color: var(--text-muted); font-weight: 600; text-align: center; line-height: 1.2; }
+.mood-btn.selected { border-color: var(--accent); background: var(--accent-light); }
+.mood-btn.selected .label { color: var(--accent-dark); }
+
+/* ── HABIT BLOCK ── */
+.habit-block {
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 1.5px solid;
+}
+.habit-block.morning { background: var(--morning-bg); border-color: var(--morning-border); }
+.habit-block.afternoon { background: var(--afternoon-bg); border-color: var(--afternoon-border); }
+.habit-block.evening { background: var(--evening-bg); border-color: var(--evening-border); }
+
+.habit-block-header {
+  padding: 10px 14px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.habit-block.morning .habit-block-header { color: #7A5C00; }
+.habit-block.afternoon .habit-block-header { color: #2D5E2D; }
+.habit-block.evening .habit-block-header { color: #4A3678; }
+
+.habit-block-body { padding: 0 14px 8px; }
+
+.habit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+  user-select: none;
+}
+.habit-item + .habit-item {
+  border-top: 1px solid rgba(53,35,24,0.07);
+}
+
+.check-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(53,35,24,0.2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s;
+  background: rgba(255,255,255,0.7);
+}
+.habit-item.done .check-circle {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.check-circle svg {
+  width: 12px; height: 12px;
+  stroke: white;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.habit-item.done .check-circle svg { opacity: 1; }
+
+.habit-label {
+  font-size: 14px;
+  line-height: 1.35;
+  transition: color 0.15s;
+}
+.habit-item.done .habit-label {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--text-light);
+}
+
+/* ── SCALES ── */
+.section-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.scale-row {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+.scale-btn {
+  flex: 1;
+  padding: 8px 2px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  transition: all 0.15s;
+  line-height: 1.3;
+  user-select: none;
+}
+.scale-btn.sel { background: var(--primary); border-color: var(--primary); color: white; }
+
+/* ── TRIGGERS ── */
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 8px;
+}
+.chip {
+  padding: 6px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface-2);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.15s;
+  user-select: none;
+}
+.chip.on { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+
+/* ── NOTES ── */
+.notes-ta {
+  width: 100%;
+  min-height: 72px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface-2);
+  resize: none;
+  margin-top: 8px;
+}
+.notes-ta:focus { outline: none; border-color: var(--primary); }
+.notes-ta::placeholder { color: var(--text-light); }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 14px 0 12px; }
+
+/* ── PAGE TITLE ── */
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-style: italic;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
+/* ── MEAL PLAN ── */
+.day-scroller {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+}
+.day-scroller::-webkit-scrollbar { display: none; }
+
+.day-pill {
+  flex-shrink: 0;
+  padding: 7px 15px;
+  border-radius: 20px;
+  border: none;
+  background: var(--surface-2);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  user-select: none;
+}
+.day-pill.active { background: var(--primary); color: white; }
+
+.meal-slot { margin-bottom: 12px; }
+.meal-slot-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+.meal-ta {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface-2);
+  resize: none;
+  min-height: 44px;
+  transition: border-color 0.15s;
+}
+.meal-ta:focus { outline: none; border-color: var(--primary); }
+.meal-ta::placeholder { color: var(--text-light); }
+
+/* ── OVERVIEW ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 14px 12px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(228,217,204,0.6);
+}
+.stat-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.week-bar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+.week-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.week-cell-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.week-cell-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+.week-cell-dot.tracked { background: var(--primary-light); color: var(--primary-dark); }
+.week-cell-dot.today { background: var(--primary); color: white; }
+
+/* ── MEASUREMENT INPUTS ── */
+.measure-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+.measure-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.measure-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xs);
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-2);
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.measure-input:focus { outline: none; border-color: var(--primary); }
+.measure-input::placeholder { color: var(--text-light); font-weight: 400; }
+
+/* ── FOOD GUIDE ── */
+.food-group { margin-bottom: 14px; }
+.food-group-header {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  letter-spacing: 0.2px;
+}
+.food-group.best .food-group-header { background: var(--primary); color: white; }
+.food-group.worst .food-group-header { background: var(--accent); color: white; }
+.food-group.supps .food-group-header { background: var(--tan); color: white; }
+
+.food-list {
+  border: 1.5px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  overflow: hidden;
+  background: var(--surface);
+}
+.food-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 14px;
+  font-size: 13.5px;
+}
+.food-row + .food-row { border-top: 1px solid var(--border); }
+.food-emoji { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.food-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* ── SAVE TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-dark);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.25s;
+  z-index: 200;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+
+/* ── BANNER (top of overview) ── */
+.week-banner {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  border-radius: var(--r);
+  padding: 16px;
+  color: white;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.week-banner::before {
+  content: '🌿';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  opacity: 0.3;
+}
+.week-banner-title { font-size: 12px; font-weight: 700; opacity: 0.8; letter-spacing: 0.5px; text-transform: uppercase; }
+.week-banner-msg {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-style: italic;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* ── EMPTY MSG ── */
+.empty-msg { text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px; }
+
+/* ── MISC ── */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input[type=number] { -moz-appearance: textfield; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-top">
+    <div>
+      <div class="app-name">PCOS Planner 🌿</div>
+      <div class="app-tagline">Tvůj každodenní průvodce</div>
+    </div>
+    <div class="cycle-pill">
+      <span class="cycle-pill-label">Den cyklu</span>
+      <input type="number" id="cycleDayInput" min="1" max="45" placeholder="?">
+    </div>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Uloženo ✓</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: DNES -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="tab-pane active" id="pane-dnes">
+
+  <!-- Mood + Progress -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Jak se dnes cítíš?</div>
+        <div class="card-subtitle">Energie & nálada dne</div>
+      </div>
+      <div class="ring-wrap">
+        <svg width="54" height="54" viewBox="0 0 54 54">
+          <circle class="ring-track" cx="27" cy="27" r="23"/>
+          <circle class="ring-fill" id="ringFill" cx="27" cy="27" r="23"/>
+        </svg>
+        <div class="ring-text" id="ringText">0%</div>
+      </div>
+    </div>
+    <div class="mood-row" id="moodRow">
+      <button class="mood-btn" data-v="1"><span class="emoji">😴</span><span class="label">Bez energie</span></button>
+      <button class="mood-btn" data-v="2"><span class="emoji">😔</span><span class="label">Hůře</span></button>
+      <button class="mood-btn" data-v="3"><span class="emoji">😐</span><span class="label">Nic moc</span></button>
+      <button class="mood-btn" data-v="4"><span class="emoji">🙂</span><span class="label">Dobře</span></button>
+      <button class="mood-btn" data-v="5"><span class="emoji">✨</span><span class="label">Skvěle!</span></button>
+    </div>
+  </div>
+
+  <!-- Morning habits -->
+  <div class="habit-block morning">
+    <div class="habit-block-header">🌅 Ráno</div>
+    <div class="habit-block-body" id="hab-morning">
+      <div class="habit-item" data-b="morning" data-i="0"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Sklenka vody před kávou</span></div>
+      <div class="habit-item" data-b="morning" data-i="1"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Protein do 60 minut od vstávání</span></div>
+      <div class="habit-item" data-b="morning" data-i="2"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Pohyb 10–15 minut (chůze, strečink)</span></div>
+      <div class="habit-item" data-b="morning" data-i="3"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">5 minut venku – ranní světlo</span></div>
+    </div>
+  </div>
+
+  <!-- Afternoon habits -->
+  <div class="habit-block afternoon">
+    <div class="habit-block-header">☀️ Odpoledne</div>
+    <div class="habit-block-body" id="hab-afternoon">
+      <div class="habit-item" data-b="afternoon" data-i="0"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Vybalancovaný oběd (bílkoviny + vláknina)</span></div>
+      <div class="habit-item" data-b="afternoon" data-i="1"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Procházka po jídle (10–15 min)</span></div>
+      <div class="habit-item" data-b="afternoon" data-i="2"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">1,5 litru vody do odpoledne</span></div>
+    </div>
+  </div>
+
+  <!-- Evening habits -->
+  <div class="habit-block evening">
+    <div class="habit-block-header">🌙 Večer</div>
+    <div class="habit-block-body" id="hab-evening">
+      <div class="habit-item" data-b="evening" data-i="0"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Zdravá svačina – bez cukru</span></div>
+      <div class="habit-item" data-b="evening" data-i="1"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Relaxace (dech, meditace, čtení)</span></div>
+      <div class="habit-item" data-b="evening" data-i="2"><div class="check-circle"><svg viewBox="0 0 12 10" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1.5"/></svg></div><span class="habit-label">Bez ultra-zpracovaných jídel</span></div>
+    </div>
+  </div>
+
+  <!-- Symptoms -->
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Jak se tělo cítilo?</div>
+
+    <div class="section-label">💤 Spánek</div>
+    <div class="scale-row" id="sc-sleep">
+      <button class="scale-btn" data-s="sleep" data-v="1">Špatně</button>
+      <button class="scale-btn" data-s="sleep" data-v="2">Ušlo</button>
+      <button class="scale-btn" data-s="sleep" data-v="3">Dobře</button>
+      <button class="scale-btn" data-s="sleep" data-v="4">Skvěle</button>
+    </div>
+
+    <div class="section-label">💪 Energie</div>
+    <div class="scale-row" id="sc-energy">
+      <button class="scale-btn" data-s="energy" data-v="1">Vyčerpaná</button>
+      <button class="scale-btn" data-s="energy" data-v="2">Unavená</button>
+      <button class="scale-btn" data-s="energy" data-v="3">V pohodě</button>
+      <button class="scale-btn" data-s="energy" data-v="4">Plná sil</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">🫃 Nafouklnutí</div>
+    <div class="scale-row">
+      <button class="scale-btn" data-s="bloat" data-v="1">Vůbec</button>
+      <button class="scale-btn" data-s="bloat" data-v="2">Trochu</button>
+      <button class="scale-btn" data-s="bloat" data-v="3">Středně</button>
+      <button class="scale-btn" data-s="bloat" data-v="4">Hodně</button>
+    </div>
+
+    <div class="section-label">🧠 Mozková mlha</div>
+    <div class="scale-row">
+      <button class="scale-btn" data-s="fog" data-v="1">Vůbec</button>
+      <button class="scale-btn" data-s="fog" data-v="2">Trochu</button>
+      <button class="scale-btn" data-s="fog" data-v="3">Středně</button>
+      <button class="scale-btn" data-s="fog" data-v="4">Hodně</button>
+    </div>
+
+    <div class="section-label">😤 Kůže / akné</div>
+    <div class="scale-row">
+      <button class="scale-btn" data-s="skin" data-v="1">OK</button>
+      <button class="scale-btn" data-s="skin" data-v="2">Trochu</button>
+      <button class="scale-btn" data-s="skin" data-v="3">Středně</button>
+      <button class="scale-btn" data-s="skin" data-v="4">Hodně</button>
+    </div>
+  </div>
+
+  <!-- Triggers -->
+  <div class="card">
+    <div class="card-title">🔥 Potenciální spouštěče zánětu</div>
+    <div class="chip-grid" id="triggerGrid">
+      <div class="chip" data-t="sugar">🍬 Cukr</div>
+      <div class="chip" data-t="dairy">🥛 Mléčné</div>
+      <div class="chip" data-t="carbs">🍞 Bílé sacharidy</div>
+      <div class="chip" data-t="sleep">😴 Špatný spánek</div>
+      <div class="chip" data-t="stress">😰 Stres</div>
+      <div class="chip" data-t="skipped">⏰ Vynechané jídlo</div>
+      <div class="chip" data-t="alcohol">🍷 Alkohol</div>
+      <div class="chip" data-t="processed">🍕 Ultra-zprac. jídla</div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="card">
+    <div class="card-title">📝 Poznámky</div>
+    <textarea class="notes-ta" id="notesInput" placeholder="Co ses dnes naučila? Co fungovalo? Jak ses cítila?"></textarea>
+  </div>
+
+</div><!-- /pane-dnes -->
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: JÍDLO -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="tab-pane" id="pane-jidlo">
+  <div class="page-title">Týdenní jídelní plán</div>
+
+  <div class="day-scroller" id="dayScroller">
+    <button class="day-pill active" data-d="po">Pondělí</button>
+    <button class="day-pill" data-d="ut">Úterý</button>
+    <button class="day-pill" data-d="st">Středa</button>
+    <button class="day-pill" data-d="ct">Čtvrtek</button>
+    <button class="day-pill" data-d="pa">Pátek</button>
+    <button class="day-pill" data-d="so">Sobota</button>
+    <button class="day-pill" data-d="ne">Neděle</button>
+  </div>
+
+  <div class="card" id="mealCard">
+    <div class="meal-slot">
+      <div class="meal-slot-label">🌅 Snídaně</div>
+      <textarea class="meal-ta" data-m="snidane" placeholder="Co budeš jíst k snídani?" rows="2"></textarea>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-slot-label">☀️ Oběd</div>
+      <textarea class="meal-ta" data-m="obed" placeholder="Co budeš jíst k obědu?" rows="2"></textarea>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-slot-label">🌙 Večeře</div>
+      <textarea class="meal-ta" data-m="vecere" placeholder="Co budeš jíst k večeři?" rows="2"></textarea>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-slot-label">🍎 Svačina</div>
+      <textarea class="meal-ta" data-m="svacina" placeholder="Zdravá svačinka?" rows="1"></textarea>
+    </div>
+    <div class="meal-slot">
+      <div class="meal-slot-label">💊 Doplňky stravy</div>
+      <textarea class="meal-ta" data-m="supps" placeholder="Myo-inositol, vitamín D, omega-3..." rows="1"></textarea>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: PŘEHLED -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="tab-pane" id="pane-prehled">
+  <div class="week-banner">
+    <div class="week-banner-title">Tento týden</div>
+    <div class="week-banner-msg" id="weekMsg">Jen tak dál! 🌱</div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-value" id="statPct">—</div>
+      <div class="stat-label">průměr návyků</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statDays">0</div>
+      <div class="stat-label">dní s daty</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:10px">Aktivita v týdnu</div>
+    <div class="week-bar" id="weekBar"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:8px">Nejčastější spouštěče</div>
+    <div class="chip-grid" id="triggerSummary"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:4px">Tělesné míry <span style="font-size:13px;font-weight:400;color:var(--text-muted)">(volitelné)</span></div>
+    <div class="measure-grid">
+      <div>
+        <div class="measure-label">⚖️ Váha (kg)</div>
+        <input class="measure-input" type="number" step="0.1" id="weightInput" placeholder="—">
+      </div>
+      <div>
+        <div class="measure-label">📏 Pas (cm)</div>
+        <input class="measure-input" type="number" step="0.5" id="waistInput" placeholder="—">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: POTRAVINY -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="tab-pane" id="pane-potraviny">
+  <div class="page-title">Průvodce potravinami</div>
+  <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Rychlý referenční přehled pro PCOS – co tělu pomáhá a čemu se vyplatí vyhnout.</p>
+
+  <div class="food-group best">
+    <div class="food-group-header">✅ Nejlepší potraviny pro PCOS</div>
+    <div class="food-list">
+      <div class="food-row"><span class="food-emoji">🥬</span><div><div>Listová zelenina</div><div class="food-desc">špenát, kapusta, rukola – hořčík, železo</div></div></div>
+      <div class="food-row"><span class="food-emoji">🫐</span><div><div>Bobulové ovoce</div><div class="food-desc">borůvky, maliny, jahody – nízké GI, antioxidanty</div></div></div>
+      <div class="food-row"><span class="food-emoji">🐟</span><div><div>Tučné ryby</div><div class="food-desc">makrela, sardinky, losos – EPA + DHA omega-3</div></div></div>
+      <div class="food-row"><span class="food-emoji">🥑</span><div><div>Avokádo</div><div class="food-desc">zdravé tuky, vláknina, draslík</div></div></div>
+      <div class="food-row"><span class="food-emoji">🫘</span><div><div>Luštěniny</div><div class="food-desc">čočka, cizrna, fazole – GI ~30, vláknina, bílkoviny</div></div></div>
+      <div class="food-row"><span class="food-emoji">🌾</span><div><div>Pohanka</div><div class="food-desc">přirozený zdroj D-chiro-inositolu</div></div></div>
+      <div class="food-row"><span class="food-emoji">🌱</span><div><div>Lněné semínko</div><div class="food-desc">lignany – snižují testosteron až o 70 %</div></div></div>
+      <div class="food-row"><span class="food-emoji">🥦</span><div><div>Brukvovitá zelenina</div><div class="food-desc">brokolice, karfiol – I3C/DIM pro detox estrogenů</div></div></div>
+      <div class="food-row"><span class="food-emoji">🌿</span><div><div>Mátový čaj (spearmint)</div><div class="food-desc">pouze Mentha spicata – antiandrogenní efekt</div></div></div>
+      <div class="food-row"><span class="food-emoji">🥛</span><div><div>Kefír & bílý jogurt</div><div class="food-desc">probiotika, estrobolom, mikrobiom</div></div></div>
+      <div class="food-row"><span class="food-emoji">🫚</span><div><div>Olivový olej (extra panenský)</div><div class="food-desc">protizánětlivé mono-nenasycené tuky</div></div></div>
+      <div class="food-row"><span class="food-emoji">🌰</span><div><div>Ořechy a semínka</div><div class="food-desc">vlašské ořechy, mandle, chia, dýňová semínka</div></div></div>
+      <div class="food-row"><span class="food-emoji">🍵</span><div><div>Skořice</div><div class="food-desc">inzulinová senzitivita, stabilizace glykémie</div></div></div>
+      <div class="food-row"><span class="food-emoji">🟡</span><div><div>Kurkuma + pepř</div><div class="food-desc">silně protizánětlivé – piperin zvyšuje vstřebávání</div></div></div>
+    </div>
+  </div>
+
+  <div class="food-group worst" style="margin-top:14px">
+    <div class="food-group-header">❌ Čemu se raději vyhnout</div>
+    <div class="food-list">
+      <div class="food-row"><span class="food-emoji">🍬</span><div><div>Cukr a sladkosti</div><div class="food-desc">prudce zvyšuje inzulin → spouští androgeny</div></div></div>
+      <div class="food-row"><span class="food-emoji">🥤</span><div><div>Slazené nápoje a džusy</div><div class="food-desc">fruktóza zatěžuje játra, GI mimo kontrolu</div></div></div>
+      <div class="food-row"><span class="food-emoji">🍞</span><div><div>Bílé pečivo a bílá rýže</div><div class="food-desc">vysoké GI, minimum vlákniny</div></div></div>
+      <div class="food-row"><span class="food-emoji">🍕</span><div><div>Ultra-zpracovaná jídla</div><div class="food-desc">trans-tuky, aditiva, zánětlivé</div></div></div>
+      <div class="food-row"><span class="food-emoji">🍺</span><div><div>Alkohol</div><div class="food-desc">narušuje detox estrogenů v játrech</div></div></div>
+      <div class="food-row"><span class="food-emoji">🥣</span><div><div>Slazené cereálie</div><div class="food-desc">skrytý cukr, vysoké GI</div></div></div>
+    </div>
+  </div>
+
+  <div class="food-group supps" style="margin-top:14px">
+    <div class="food-group-header">💊 Doplňky s největší evidencí</div>
+    <div class="food-list">
+      <div class="food-row"><span class="food-emoji">🔬</span><div><div><strong>Myo-inositol 4g + D-chiro-inositol 100mg</strong></div><div class="food-desc">Nejsilnější evidence – poměr 40:1, inzulinová rezistence, SHBG</div></div></div>
+      <div class="food-row"><span class="food-emoji">☀️</span><div><div><strong>Vitamín D 1 000–4 000 IU/den</strong></div><div class="food-desc">Deficit u 67–86 % žen s PCOS</div></div></div>
+      <div class="food-row"><span class="food-emoji">🐟</span><div><div><strong>Omega-3 1–3g EPA+DHA/den</strong></div><div class="food-desc">Snižuje testosteron a CRP (zánět)</div></div></div>
+      <div class="food-row"><span class="food-emoji">⚡</span><div><div><strong>Hořčík 250–400 mg/den</strong></div><div class="food-desc">Inzulinová senzitivita, spánek, stres</div></div></div>
+      <div class="food-row"><span class="food-emoji">🪨</span><div><div><strong>Zinek 20–50 mg/den</strong></div><div class="food-desc">Androgeny, kůže, vlasy, imunita</div></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-tab="dnes">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14" stroke-width="3"/><line x1="12" y1="14" x2="12" y2="14" stroke-width="3"/><line x1="16" y1="14" x2="16" y2="14" stroke-width="3"/></svg>
+    Dnes
+  </button>
+  <button class="nav-btn" data-tab="jidlo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+    Jídlo
+  </button>
+  <button class="nav-btn" data-tab="prehled">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Přehled
+  </button>
+  <button class="nav-btn" data-tab="potraviny">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/><path d="M12 8v4l3 3"/><path d="M2 2l4 4"/></svg>
+    Potraviny
+  </button>
+</nav>
+
+<script>
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+const TOTAL_HABITS = 10; // 4 morning + 3 afternoon + 3 evening
+
+function todayKey() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function weekKey() {
+  const d = new Date();
+  const day = d.getDay() || 7;
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - day + 1);
+  return mon.toISOString().split('T')[0];
+}
+
+function getStore(key) {
+  try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; }
+}
+function setStore(key, val) {
+  localStorage.setItem(key, JSON.stringify(val));
+}
+
+let toastTimer;
+function showToast() {
+  clearTimeout(toastTimer);
+  const el = document.getElementById('toast');
+  el.classList.add('show');
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1400);
+}
+
+const TODAY = todayKey();
+const WEEK  = weekKey();
+
+// ═══════════════════════════════════════════════
+// PROGRESS RING
+// ═══════════════════════════════════════════════
+const CIRC = 2 * Math.PI * 23;
+function setRing(checked, total) {
+  const pct = total > 0 ? Math.round(checked / total * 100) : 0;
+  const fill = document.getElementById('ringFill');
+  fill.style.strokeDasharray = CIRC;
+  fill.style.strokeDashoffset = CIRC - (pct / 100) * CIRC;
+  document.getElementById('ringText').textContent = pct + '%';
+}
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let dayData  = getStore('pcos_day_' + TODAY);
+let mealData = getStore('pcos_meals_' + WEEK);
+let weekData = getStore('pcos_week_' + WEEK);
+let activeMealDay = 'po';
+
+function saveDayData() { setStore('pcos_day_' + TODAY, dayData); showToast(); }
+function saveMealData() { setStore('pcos_meals_' + WEEK, mealData); showToast(); }
+function saveWeekData() { setStore('pcos_week_' + WEEK, weekData); showToast(); }
+
+// ═══════════════════════════════════════════════
+// HEADER
+// ═══════════════════════════════════════════════
+(function initHeader() {
+  const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+  document.getElementById('headerDate').textContent =
+    new Date().toLocaleDateString('cs-CZ', opts);
+
+  const ci = document.getElementById('cycleDayInput');
+  if (dayData.cycleDay) ci.value = dayData.cycleDay;
+  ci.addEventListener('change', () => {
+    dayData.cycleDay = ci.value;
+    saveDayData();
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// HABITS
+// ═══════════════════════════════════════════════
+function countChecked() {
+  return document.querySelectorAll('.habit-item.done').length;
+}
+
+function updateRing() {
+  setRing(countChecked(), TOTAL_HABITS);
+}
+
+(function initHabits() {
+  if (!dayData.habits) dayData.habits = {};
+
+  document.querySelectorAll('.habit-item').forEach(item => {
+    const key = item.dataset.b + '_' + item.dataset.i;
+    if (dayData.habits[key]) item.classList.add('done');
+
+    item.addEventListener('click', () => {
+      item.classList.toggle('done');
+      dayData.habits[key] = item.classList.contains('done');
+      saveDayData();
+      updateRing();
+    });
+  });
+
+  updateRing();
+})();
+
+// ═══════════════════════════════════════════════
+// MOOD
+// ═══════════════════════════════════════════════
+(function initMood() {
+  if (!dayData.mood) dayData.mood = null;
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    if (String(dayData.mood) === btn.dataset.v) btn.classList.add('selected');
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      dayData.mood = btn.dataset.v;
+      saveDayData();
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// SYMPTOM SCALES
+// ═══════════════════════════════════════════════
+(function initScales() {
+  if (!dayData.symptoms) dayData.symptoms = {};
+  document.querySelectorAll('.scale-btn').forEach(btn => {
+    const s = btn.dataset.s, v = btn.dataset.v;
+    if (String(dayData.symptoms[s]) === v) btn.classList.add('sel');
+    btn.addEventListener('click', () => {
+      document.querySelectorAll(`.scale-btn[data-s="${s}"]`).forEach(b => b.classList.remove('sel'));
+      btn.classList.add('sel');
+      dayData.symptoms[s] = v;
+      saveDayData();
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// TRIGGERS
+// ═══════════════════════════════════════════════
+(function initTriggers() {
+  if (!dayData.triggers) dayData.triggers = {};
+  document.querySelectorAll('#triggerGrid .chip').forEach(chip => {
+    const t = chip.dataset.t;
+    if (dayData.triggers[t]) chip.classList.add('on');
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('on');
+      dayData.triggers[t] = chip.classList.contains('on');
+      saveDayData();
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// NOTES
+// ═══════════════════════════════════════════════
+(function initNotes() {
+  const ta = document.getElementById('notesInput');
+  if (dayData.notes) ta.value = dayData.notes;
+  let noteTimer;
+  ta.addEventListener('input', () => {
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(() => {
+      dayData.notes = ta.value;
+      saveDayData();
+    }, 700);
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// MEAL PLAN
+// ═══════════════════════════════════════════════
+function loadMealDay(day) {
+  const d = mealData[day] || {};
+  document.querySelectorAll('.meal-ta').forEach(ta => {
+    ta.value = d[ta.dataset.m] || '';
+    ta.oninput = () => {
+      if (!mealData[day]) mealData[day] = {};
+      mealData[day][ta.dataset.m] = ta.value;
+      saveMealData();
+    };
+  });
+}
+
+(function initMealPlan() {
+  document.querySelectorAll('.day-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.day-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeMealDay = btn.dataset.d;
+      loadMealDay(activeMealDay);
+    });
+  });
+  // Auto-select today's day
+  const dayMap = { 0:'ne',1:'po',2:'ut',3:'st',4:'ct',5:'pa',6:'so' };
+  const todayDay = dayMap[new Date().getDay()];
+  document.querySelectorAll('.day-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.d === todayDay);
+  });
+  activeMealDay = todayDay;
+  loadMealDay(todayDay);
+})();
+
+// ═══════════════════════════════════════════════
+// OVERVIEW
+// ═══════════════════════════════════════════════
+function buildOverview() {
+  const dayLabels = ['Po','Út','St','Čt','Pá','So','Ne'];
+  const today = new Date();
+  const dayOfWeek = today.getDay() || 7;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - dayOfWeek + 1);
+
+  // Week bar
+  const bar = document.getElementById('weekBar');
+  bar.innerHTML = '';
+  let daysTracked = 0, totalPct = 0, pctCount = 0;
+  const triggerCounts = {};
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    const data = getStore('pcos_day_' + key);
+    const isToday = key === TODAY;
+    const habits = data.habits || {};
+    const habCount = Object.values(habits).filter(Boolean).length;
+    const hasAny = Object.keys(habits).length > 0;
+    if (hasAny) {
+      daysTracked++;
+      const pct = Math.round(habCount / TOTAL_HABITS * 100);
+      totalPct += pct;
+      pctCount++;
+    }
+
+    // Aggregate triggers
+    if (data.triggers) {
+      Object.entries(data.triggers).forEach(([k,v]) => {
+        if (v) triggerCounts[k] = (triggerCounts[k] || 0) + 1;
+      });
+    }
+
+    const cell = document.createElement('div');
+    cell.className = 'week-cell';
+    const lbl = document.createElement('div');
+    lbl.className = 'week-cell-label';
+    lbl.textContent = dayLabels[i];
+    const dot = document.createElement('div');
+    dot.className = 'week-cell-dot' + (hasAny ? ' tracked' : '') + (isToday ? ' today' : '');
+    dot.textContent = d.getDate();
+    cell.appendChild(lbl);
+    cell.appendChild(dot);
+    bar.appendChild(cell);
+  }
+
+  // Stats
+  document.getElementById('statDays').textContent = daysTracked;
+  document.getElementById('statPct').textContent = pctCount > 0 ? Math.round(totalPct / pctCount) + '%' : '—';
+
+  // Banner message
+  const msgs = ['Začni svůj týden s láskou k sobě. 🌱', 'Každý malý krok se počítá! ✨', 'Jsem na tebe hrdá. Tak dál! 💚', 'Tvoje tělo ti děkuje. 🌿'];
+  document.getElementById('weekMsg').textContent = msgs[daysTracked % msgs.length];
+
+  // Trigger summary
+  const trigLabels = {
+    sugar:'🍬 Cukr', dairy:'🥛 Mléčné', carbs:'🍞 Sacharidy',
+    sleep:'😴 Spánek', stress:'😰 Stres', skipped:'⏰ Vynechal. jídlo',
+    alcohol:'🍷 Alkohol', processed:'🍕 Zprac. jídla'
+  };
+  const ts = document.getElementById('triggerSummary');
+  ts.innerHTML = '';
+  const sorted = Object.entries(triggerCounts).sort((a,b) => b[1]-a[1]);
+  if (sorted.length === 0) {
+    ts.innerHTML = '<p class="empty-msg">Žádné spouštěče tento týden – skvělé! 🌿</p>';
+  } else {
+    sorted.slice(0,6).forEach(([k,c]) => {
+      const chip = document.createElement('div');
+      chip.className = 'chip on';
+      chip.style.cursor = 'default';
+      chip.textContent = (trigLabels[k]||k) + ' ×' + c;
+      ts.appendChild(chip);
+    });
+  }
+
+  // Measurements
+  if (weekData.weight) document.getElementById('weightInput').value = weekData.weight;
+  if (weekData.waist)  document.getElementById('waistInput').value  = weekData.waist;
+}
+
+document.getElementById('weightInput').addEventListener('change', function() {
+  weekData.weight = this.value; saveWeekData();
+});
+document.getElementById('waistInput').addEventListener('change', function() {
+  weekData.waist = this.value; saveWeekData();
+});
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById('pane-' + tab).classList.add('active');
+    if (tab === 'prehled') buildOverview();
+  });
+});
+</script>
+</body>
+</html>
